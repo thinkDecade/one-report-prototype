@@ -1,37 +1,14 @@
 "use client";
 
 import clsx from "clsx";
-import { ArrowLeftRight, Bell, Clock, FileText, Search, Shield, Snowflake, TriangleExclamationPoint } from "lucide-react";
+import { ArrowLeftRight, Bell, Clock, FileText, Search, Shield, Snowflake } from "lucide-react";
 import { usePortal } from "@/lib/store";
 import { AUTHORITIES } from "@/lib/routing";
+import AckClocks from "./AckClocks";
 import { escalationLevel } from "@/lib/cases";
-import type { AuthorityCode } from "@/lib/types";
-import { duration } from "@/lib/format";
 import AppNav from "@/components/AppNav";
 import { Loading, useHydrated } from "@/components/ui";
 
-const M = 60_000;
-const ORDER: AuthorityCode[] = ["CSA", "CID", "FIC", "BOG_PSD", "BOG_VAD", "SEC", "AGD", "EOCO", "NCA", "FICSOC"];
-
-const LABELS: Partial<Record<AuthorityCode, string>> = {
-  CSA: "Cyber Security Authority",
-  CID: "Police CID",
-  FIC: "FIC",
-  BOG_PSD: "BoG Payments",
-  BOG_VAD: "BoG Virtual Assets",
-  SEC: "SEC Ghana",
-  AGD: "Attorney-General",
-  EOCO: "EOCO",
-  NCA: "NCA",
-  FICSOC: "FICSOC",
-};
-
-function median(xs: number[]) {
-  if (!xs.length) return null;
-  const s = [...xs].sort((a, b) => a - b);
-  const m = Math.floor(s.length / 2);
-  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
-}
 
 export default function Steering() {
   const hydrated = useHydrated();
@@ -43,17 +20,6 @@ export default function Steering() {
   const crossRail = open.filter((c) => c.crossRail).length;
   const freezeActs = tasks.flatMap((t) => t.events).filter((e) => e.button === "record" && /freez|hold|restrict/i.test(e.code ?? "")).length;
   const escalated = tasks.filter((t) => escalationLevel(t, now) >= 2);
-
-  const rows = ORDER.map((a) => {
-    const ts = tasks.filter((t) => t.authority === a);
-    const ack = ts.filter((t) => t.acknowledgedAt).map((t) => (t.acknowledgedAt! - t.createdAt) / M);
-    const pendingLate = ts.filter((t) => t.state === "pending").map((t) => (now - t.createdAt) / M);
-    const target = a === "CSA" ? 60 : 120;
-    const med = median([...ack, ...pendingLate.filter((x) => x > target)]);
-    return { a, med, target, n: ts.length };
-  }).filter((r) => r.n > 0);
-  const max = Math.max(240, ...rows.map((r) => r.med ?? 0));
-  const over = rows.filter((r) => (r.med ?? 0) > r.target).length;
 
   const reg = {
     confirmed: entries.filter((e) => e.status === "confirmed").length,
@@ -84,33 +50,9 @@ export default function Steering() {
         <Stat icon={<ArrowLeftRight size={18} />} label="Cross-rail cases" value={String(crossRail)} sub="Mobile money and crypto in one case" />
       </div>
 
-      <div className="grid flex-1 gap-3 lg:grid-cols-[minmax(0,1fr)_400px]">
-        <section className="flex flex-col gap-4 rounded-[26px] bg-white px-7 py-6">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="text-xl font-semibold tracking-tight">Median time to acknowledge</span>
-            <span className="flex items-center gap-2 text-xs text-muted">
-              <span className="h-3.5 w-0.5 bg-ink" /> Target
-            </span>
-          </div>
-          {rows.map((r) => {
-            const late = (r.med ?? 0) > r.target;
-            return (
-              <div key={r.a} className={clsx("grid grid-cols-[180px_minmax(0,1fr)_70px] items-center gap-4 text-sm", late && "font-semibold")}>
-                <span className="truncate">{LABELS[r.a] ?? AUTHORITIES[r.a].short}</span>
-                <div className="relative h-3.5 rounded-full bg-paper">
-                  <div className={clsx("h-3.5 rounded-full", late ? "bg-gold" : "bg-navy")} style={{ width: `${Math.min(100, ((r.med ?? 0) / max) * 100)}%` }} />
-                  <div className="absolute -top-[5px] h-6 w-0.5 bg-ink" style={{ left: `${(r.target / max) * 100}%` }} />
-                </div>
-                <span className="text-right font-mono">{r.med === null ? "—" : duration(r.med)}</span>
-              </div>
-            );
-          })}
-          <div className="mt-auto flex items-center gap-3 rounded-[18px] bg-gold-soft px-4 py-3.5 text-sm">
-            <TriangleExclamationPoint size={18} className="shrink-0" />
-            {over ? `${over} authorit${over === 1 ? "y is" : "ies are"} over target.` : "Every authority is within target."} {escalated.length} task{escalated.length === 1 ? "" : "s"} escalated to a supervisor or higher.
-          </div>
-        </section>
+      <AckClocks />
 
+      <div className="grid flex-1 gap-3">
         <section className="flex flex-col rounded-[26px] bg-white px-7 py-6">
           <div className="flex items-center justify-between pb-3.5">
             <span className="text-xl font-semibold">Check register</span>
