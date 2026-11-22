@@ -29,10 +29,10 @@ export default function Steering() {
 
   return (
     <div className="flex min-h-screen flex-col gap-3 bg-paper p-3 pb-24 sm:p-6 sm:pb-24">
-      <section className="kente flex flex-col gap-9 rounded-[32px] px-4 pb-8 pt-5 text-white sm:px-6">
+      <section className="kente flex flex-col gap-6 rounded-[24px] px-4 pb-8 pt-5 text-white sm:px-6">
         <AppNav />
         <div className="flex flex-wrap items-end justify-between gap-6 px-2">
-          <h1 className="font-display text-[clamp(56px,7vw,88px)] font-extrabold leading-[0.88] tracking-[-0.06em]">
+          <h1 className="font-display text-[clamp(35px,4.3vw,55px)] font-extrabold leading-[0.88] tracking-[-0.06em]">
             Is it moving
             <br />
             fast enough?
@@ -89,7 +89,7 @@ function Stat({ icon, label, value, sub, dark }: { icon: React.ReactNode; label:
         <span className={clsx("text-sm", dark ? "text-white/65" : "text-muted")}>{label}</span>
         <span className={clsx("flex h-11 w-11 items-center justify-center rounded-full", dark ? "bg-gold text-ink" : "bg-paper")}>{icon}</span>
       </div>
-      <span className="text-[60px] font-bold leading-[0.9] tracking-[-0.05em]">{value}</span>
+      <span className="text-[39px] font-bold leading-[0.9] tracking-[-0.05em]">{value}</span>
       <span className={clsx("text-[13px]", dark ? "text-white/65" : "text-muted")}>{sub}</span>
     </div>
   );

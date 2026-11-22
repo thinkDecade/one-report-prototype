@@ -13,12 +13,12 @@ export default function Journeys() {
   const enter = useEnterStep();
   return (
     <div className="flex min-h-screen flex-col gap-3 bg-paper p-3 pb-24 sm:p-6 sm:pb-24">
-      <section className="kente flex flex-col gap-10 rounded-[32px] px-4 pb-8 pt-5 text-white sm:px-6">
+      <section className="kente flex flex-col gap-6 rounded-[24px] px-4 pb-8 pt-5 text-white sm:px-6">
         <AppNav />
         <div className="flex flex-wrap items-end justify-between gap-8 px-2 sm:px-4">
           <div className="flex flex-col gap-3">
             <span className="text-[15px] text-white/75">See it as… · pick a role and follow one person through the drill</span>
-            <h1 className="font-display text-[clamp(52px,7vw,92px)] font-extrabold leading-[0.88] tracking-[-0.06em]">
+            <h1 className="font-display text-[clamp(32px,4.3vw,57px)] font-extrabold leading-[0.88] tracking-[-0.06em]">
               Six people.
               <br />
               One incident.
@@ -33,7 +33,7 @@ export default function Journeys() {
             <button
               key={j.id}
               onClick={() => enter(j, 0)}
-              className="glass group flex min-h-[160px] flex-col gap-2 rounded-[22px] p-4 text-left transition-colors hover:bg-white/15"
+              className="glass group flex min-h-[128px] flex-col gap-2 rounded-[20px] p-4 text-left transition-colors hover:bg-white/15"
             >
               <span className="flex items-center justify-between">
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-navy">
@@ -48,11 +48,11 @@ export default function Journeys() {
         </div>
       </section>
 
-      <section className="flex flex-col rounded-[32px] bg-white px-5 pb-6 pt-8 sm:px-10">
+      <section className="flex flex-col rounded-[24px] bg-white px-5 pb-6 pt-8 sm:px-10">
         <div className="flex flex-wrap items-end justify-between gap-4 pb-5">
           <div className="flex flex-col gap-1.5">
             <span className="text-sm text-muted">The drill · ₵1.84m SIM swap theft of agent float, turned into USDT</span>
-            <span className="font-display text-[clamp(30px,3.5vw,42px)] font-extrabold tracking-[-0.045em]">Who does what, and when</span>
+            <span className="font-display text-[clamp(30px,2.2vw,38px)] font-extrabold tracking-[-0.045em]">Who does what, and when</span>
           </div>
           <div className="flex flex-wrap gap-4 text-[13px] text-[#4A4E57]">
             <span className="flex items-center gap-1.5"><span className="h-3.5 w-3.5 rounded bg-ink" />What starts it</span>

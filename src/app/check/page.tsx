@@ -81,7 +81,7 @@ export default function CheckPage() {
             {Math.max(0, DAILY - today)} of {DAILY} checks left today
           </span>
         </div>
-        <span className="pl-1 font-display text-[64px] font-extrabold leading-[0.85] tracking-[-0.06em]">Check</span>
+        <span className="pl-1 font-display text-[48px] font-extrabold leading-[0.85] tracking-[-0.06em]">Check</span>
         <span className="-mt-2 pl-1 text-[13px] text-white/75">
           For agents, OTC vendors, issuers, VASPs and banks · signed in as {persona?.name}
         </span>
@@ -115,7 +115,7 @@ export default function CheckPage() {
               Answer
             </span>
             <div className="flex flex-col gap-1">
-              <strong className="text-[34px] font-extrabold leading-[0.95] tracking-[-0.045em]">{a.title}</strong>
+              <strong className="text-[26px] font-extrabold leading-[0.95] tracking-[-0.045em]">{a.title}</strong>
               <span className="text-[15px] font-medium">{a.line}</span>
             </div>
             <div className="flex items-center justify-between rounded-2xl bg-paper px-3.5 py-3 text-[13px]">

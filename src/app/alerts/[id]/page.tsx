@@ -48,7 +48,7 @@ export default function AlertDetail() {
             <TriangleExclamationPoint size={14} strokeWidth={2.2} />
             {a.kind === "urgent" ? "URGENT" : "PATTERN"}
           </span>
-          <strong className="text-[38px] font-extrabold leading-[0.95] tracking-[-0.05em]">{a.title}</strong>
+          <strong className="text-[28px] font-extrabold leading-[0.95] tracking-[-0.05em]">{a.title}</strong>
           <span className="flex items-center gap-2 text-[13px] text-white/75">
             <ShieldCheck size={15} />
             {issuerOrg} · {hhmm(a.issuedAt)} GMT

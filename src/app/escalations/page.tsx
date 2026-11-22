@@ -27,7 +27,7 @@ export default function Escalations() {
 
   return (
     <div className="flex min-h-screen flex-col gap-3 bg-paper p-3 pb-24 sm:p-6 sm:pb-24">
-      <section className="kente flex flex-col gap-9 rounded-[32px] px-4 pb-8 pt-5 text-white sm:px-6">
+      <section className="kente flex flex-col gap-6 rounded-[24px] px-4 pb-8 pt-5 text-white sm:px-6">
         <AppNav />
         <div className="flex flex-wrap items-end justify-between gap-6 px-2 sm:px-3">
           <div className="flex flex-col gap-3">
@@ -35,7 +35,7 @@ export default function Escalations() {
               Escalated to you · {persona?.name}, {persona?.title}
               {a ? `, ${AUTHORITIES[a].name}` : ""}
             </span>
-            <h1 className="font-display text-[clamp(48px,6vw,84px)] font-extrabold leading-[0.9] tracking-[-0.06em]">
+            <h1 className="font-display text-[clamp(30px,3.7vw,52px)] font-extrabold leading-[0.9] tracking-[-0.06em]">
               {items.length ? `${items.length} task${items.length === 1 ? "" : "s"} need${items.length === 1 ? "s" : ""} you.` : "Nothing needs you."}
             </h1>
           </div>

@@ -27,7 +27,7 @@ export default function AppNav() {
       <div className="flex items-center gap-1">
         <Link href="/" aria-label="One Report home" className="mr-3">
           <span className="hidden xl:inline-flex">
-            <Logo size={44} />
+            <Logo size={40} />
           </span>
           <span className="xl:hidden">
             <Seal />
@@ -40,7 +40,7 @@ export default function AppNav() {
               key={l.href}
               href={l.href}
               className={clsx(
-                "hidden h-11 items-center rounded-full px-5 text-sm transition-colors lg:inline-flex",
+                "hidden h-10 items-center rounded-full px-4 text-sm transition-colors lg:inline-flex",
                 active ? "bg-white font-semibold text-ink" : "border border-white/30 hover:bg-white/10"
               )}
             >
@@ -50,11 +50,11 @@ export default function AppNav() {
         })}
       </div>
       <div className="flex items-center gap-1">
-        <Link href="/alerts" aria-label="Fraud alerts" className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/30 hover:bg-white/10">
+        <Link href="/alerts" aria-label="Fraud alerts" className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/30 hover:bg-white/10">
           <Bell size={17} strokeWidth={1.8} />
           {unread > 0 && <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-gold" />}
         </Link>
-        <span className="inline-flex h-11 items-center gap-2 rounded-full border border-white/30 pl-4 pr-1.5 text-sm">
+        <span className="inline-flex h-10 items-center gap-2 rounded-full border border-white/30 pl-4 pr-1.5 text-sm">
           <span className="hidden sm:inline">
             {p?.name ?? personaId} · {p?.authority ? p.institution.replace("_", " ") : p?.institution}
           </span>

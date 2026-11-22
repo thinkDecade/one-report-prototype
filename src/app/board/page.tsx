@@ -82,9 +82,9 @@ function Board() {
   if (!c)
     return (
       <div className="min-h-screen bg-paper p-6">
-        <section className="kente rounded-[32px] p-6">
+        <section className="kente rounded-[24px] p-6">
           <AppNav />
-          <h1 className="px-3 pb-6 pt-14 font-display text-7xl font-extrabold tracking-[-0.055em] text-white">No open cases.</h1>
+          <h1 className="px-3 pb-6 pt-8 font-display text-5xl font-extrabold tracking-[-0.055em] text-white">No open cases.</h1>
         </section>
       </div>
     );
@@ -100,7 +100,7 @@ function Board() {
   return (
     <div className="flex min-h-screen flex-col gap-4 bg-paper p-3 pb-24 sm:p-6 sm:pb-24">
       {/* HEADER */}
-      <section className="kente flex flex-col gap-12 rounded-[32px] px-4 pb-8 pt-5 text-white sm:px-6">
+      <section className="kente flex flex-col gap-6 rounded-[24px] px-4 pb-8 pt-5 text-white sm:px-6">
         <AppNav />
         <div className="flex flex-wrap items-end justify-between gap-8 px-2 sm:px-3">
           <div className="flex min-w-0 flex-col gap-4">
@@ -123,7 +123,7 @@ function Board() {
                 </button>
               ))}
             </div>
-            <h1 className="max-w-[820px] font-display text-[clamp(52px,6vw,80px)] font-extrabold leading-[0.9] tracking-[-0.055em]">{c.title}</h1>
+            <h1 className="max-w-[820px] font-display text-[clamp(32px,3.7vw,50px)] font-extrabold leading-[0.9] tracking-[-0.055em]">{c.title}</h1>
             <div className="flex flex-wrap items-center gap-2 text-[15px] text-white/80">
               <span className="glass inline-flex h-8 items-center gap-2 rounded-full px-3.5 text-xs">
                 <span className={clsx("h-2 w-2 rounded-full", c.severity === 1 ? "bg-overdue" : "bg-acked")} />
@@ -143,7 +143,7 @@ function Board() {
             <span className="flex items-center gap-2 text-[13px] text-white/80">
               <Clock size={16} /> Freeze requests due
             </span>
-            <span className="text-[64px] font-semibold leading-[0.9] tracking-[-0.04em]">{hhmm(freezeDue)}</span>
+            <span className="text-[42px] font-semibold leading-[0.9] tracking-[-0.04em]">{hhmm(freezeDue)}</span>
             <div className="h-1.5 rounded-full bg-white/20">
               <div className={clsx("h-1.5 rounded-full", freezeLeft < 0 ? "bg-overdue" : "bg-white")} style={{ width: `${progress * 100}%` }} />
             </div>

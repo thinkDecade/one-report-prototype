@@ -53,10 +53,10 @@ export default function MyCase() {
   if (!c)
     return (
       <div className="min-h-screen bg-paper p-3 sm:p-6">
-        <section className="kente flex flex-col gap-10 rounded-[32px] px-4 pb-10 pt-5 text-white sm:px-6">
+        <section className="kente flex flex-col gap-6 rounded-[24px] px-4 pb-10 pt-5 text-white sm:px-6">
           <AppNav />
           <div className="flex flex-col gap-4 px-3">
-            <h1 className="font-display text-6xl font-extrabold tracking-[-0.055em]">No open cases.</h1>
+            <h1 className="font-display text-4xl font-extrabold tracking-[-0.055em]">No open cases.</h1>
             <span className="text-white/75">Signed in as {persona?.name}. Cases your business files will show here.</span>
             <Link href="/report" className="inline-flex h-12 items-center self-start rounded-full bg-white px-6 font-medium text-ink">
               File a report
@@ -148,14 +148,14 @@ export default function MyCase() {
 
   return (
     <div className="flex min-h-screen flex-col gap-3 bg-paper p-3 pb-24 sm:p-6 sm:pb-24">
-      <section className="kente flex flex-col gap-10 rounded-[32px] px-4 pb-8 pt-5 text-white sm:px-6">
+      <section className="kente flex flex-col gap-6 rounded-[24px] px-4 pb-8 pt-5 text-white sm:px-6">
         <AppNav />
         <div className="flex flex-wrap items-end justify-between gap-8 px-2 sm:px-4">
           <div className="flex max-w-[760px] flex-col gap-3">
             <span className="text-sm text-white/70">
               My case · {c.id} · {c.title} · {cedi(c.lossCedi)}
             </span>
-            <h1 className="font-display text-[clamp(48px,6vw,80px)] font-extrabold leading-[0.9] tracking-[-0.06em]">Your report reached {authorities} authorities.</h1>
+            <h1 className="font-display text-[clamp(30px,3.7vw,50px)] font-extrabold leading-[0.9] tracking-[-0.06em]">Your report reached {authorities} authorities.</h1>
             <span className="text-[17px] text-white/80">
               {acked} of {tasks.length} have acknowledged it. You don&apos;t need to contact any of them separately.
             </span>
@@ -165,7 +165,7 @@ export default function MyCase() {
               <span className="flex items-center gap-1.5 text-[13px] text-white/70">
                 <Clock size={14} /> Next: freeze requests due
               </span>
-              <span className="text-[52px] font-bold leading-none tracking-[-0.05em]">{hhmm(freezeDue)}</span>
+              <span className="text-[34px] font-bold leading-none tracking-[-0.05em]">{hhmm(freezeDue)}</span>
               <div className="h-1.5 rounded-full bg-white/20">
                 <div className="h-1.5 rounded-full bg-white" style={{ width: `${progress * 100}%` }} />
               </div>
