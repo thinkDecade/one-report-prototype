@@ -64,9 +64,9 @@ export default function MyTask() {
   if (!a || !task || !c)
     return (
       <div className="min-h-screen bg-paper p-3 sm:p-6">
-        <section className="kente flex flex-col gap-10 rounded-[32px] px-4 pb-10 pt-5 text-white sm:px-6">
+        <section className="kente flex flex-col gap-6 rounded-[24px] px-4 pb-10 pt-5 text-white sm:px-6">
           <AppNav />
-          <h1 className="px-3 font-display text-6xl font-extrabold tracking-[-0.055em]">No tasks for you.</h1>
+          <h1 className="px-3 font-display text-4xl font-extrabold tracking-[-0.055em]">No tasks for you.</h1>
           <span className="px-3 text-white/75">Switch to an authority officer in the prototype controls to see their task.</span>
         </section>
       </div>
@@ -90,7 +90,7 @@ export default function MyTask() {
 
   return (
     <div className="flex min-h-screen flex-col gap-3 bg-paper p-3 pb-24 sm:p-6 sm:pb-24">
-      <section className="kente flex flex-col gap-6 rounded-[32px] px-4 pb-6 pt-5 text-white sm:px-6">
+      <section className="kente flex flex-col gap-6 rounded-[24px] px-4 pb-6 pt-5 text-white sm:px-6">
         <AppNav />
         <div className="flex flex-wrap items-center justify-between gap-3 px-2 sm:px-3">
           <span className="text-[15px] text-white/75">

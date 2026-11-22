@@ -26,9 +26,9 @@ export default function Done() {
 
   return (
     <div className="flex min-h-screen flex-col gap-3 bg-paper p-3 pb-24 sm:p-6">
-      <section className="kente flex flex-col gap-8 rounded-[32px] px-6 py-12 text-white sm:px-12">
+      <section className="kente flex flex-col gap-8 rounded-[24px] px-6 py-12 text-white sm:px-12">
         <span className="text-[15px] text-white/70">{j.role} · what this showed</span>
-        <h1 className="font-display text-[clamp(48px,6vw,84px)] font-extrabold leading-[0.9] tracking-[-0.06em]">That was {j.who.split(" · ")[0]}&apos;s part.</h1>
+        <h1 className="font-display text-[clamp(30px,3.7vw,52px)] font-extrabold leading-[0.9] tracking-[-0.06em]">That was {j.who.split(" · ")[0]}&apos;s part.</h1>
         <div className="grid gap-3 md:grid-cols-3">
           {j.showed.map((s) => (
             <div key={s.title} className="glass flex flex-col gap-2 rounded-[22px] p-5">
@@ -41,7 +41,7 @@ export default function Done() {
           ))}
         </div>
       </section>
-      <section className="flex flex-col gap-4 rounded-[32px] bg-white px-6 py-8 sm:px-10">
+      <section className="flex flex-col gap-4 rounded-[24px] bg-white px-6 py-8 sm:px-10">
         <span className="font-display text-3xl font-extrabold tracking-[-0.04em]">Now see it as someone else</span>
         <div className="grid grid-cols-2 gap-2.5 md:grid-cols-5">
           {JOURNEYS.filter((x) => x.id !== j.id).map((x) => (

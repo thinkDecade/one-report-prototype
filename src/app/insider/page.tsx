@@ -14,13 +14,13 @@ export default function InsiderReport() {
 
   return (
     <div className="grid min-h-screen gap-4 bg-paper p-3 sm:p-6 lg:grid-cols-[420px_minmax(0,1fr)]">
-      <aside className="weave flex flex-col gap-10 rounded-[32px] p-7 text-white">
+      <aside className="weave flex flex-col gap-10 rounded-[24px] p-7 text-white">
         <Link href="/" aria-label="One Report home">
           <Seal />
         </Link>
         <div className="flex flex-col gap-2.5">
           <span className="text-[15px] text-white/75">Insider report · for staff and agents</span>
-          <span className="font-display text-[72px] font-extrabold leading-[0.88] tracking-[-0.055em]">
+          <span className="font-display text-[47px] font-extrabold leading-[0.88] tracking-[-0.055em]">
             Say it
             <br />
             safely.
@@ -45,7 +45,7 @@ export default function InsiderReport() {
         </div>
       </aside>
 
-      <main className="flex flex-col gap-8 rounded-[32px] bg-white px-6 pb-9 pt-10 sm:px-12">
+      <main className="flex flex-col gap-8 rounded-[24px] bg-white px-6 pb-9 pt-10 sm:px-12">
         <div className="flex items-center justify-between">
           <span className="inline-flex h-[34px] items-center rounded-full bg-paper px-4 text-[13px] font-medium">Confidential</span>
           <Link href="/" aria-label="Close" className="flex h-11 w-11 items-center justify-center rounded-full border border-[#D6D5D1] hover:bg-paper">
@@ -58,7 +58,7 @@ export default function InsiderReport() {
             <span className="flex h-14 w-14 items-center justify-center rounded-full bg-ink text-white">
               <Check size={24} />
             </span>
-            <h1 className="font-display text-[clamp(52px,6vw,84px)] font-extrabold leading-[0.9] tracking-[-0.06em]">Received.</h1>
+            <h1 className="font-display text-[clamp(32px,3.7vw,52px)] font-extrabold leading-[0.9] tracking-[-0.06em]">Received.</h1>
             <p className="max-w-[560px] text-[17px] text-muted">
               Your reference is <span className="font-mono text-ink">{sent}</span>. Keep it. If you left no contact, you can use it to add information later. Your company has not been told.
             </p>
@@ -69,7 +69,7 @@ export default function InsiderReport() {
         ) : (
           <>
             <div className="flex flex-col gap-3.5">
-              <h1 className="font-display text-[clamp(52px,6vw,84px)] font-extrabold leading-[0.9] tracking-[-0.06em]">What is going on?</h1>
+              <h1 className="font-display text-[clamp(32px,3.7vw,52px)] font-extrabold leading-[0.9] tracking-[-0.06em]">What is going on?</h1>
               <span className="max-w-[620px] text-[17px] text-muted">
                 If you think someone inside a VASP, issuer, payment provider or agent network is helping thieves, tell us here.
               </span>

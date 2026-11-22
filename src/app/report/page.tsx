@@ -125,7 +125,7 @@ function ReportWizard() {
 
   return (
     <div className="grid min-h-screen gap-4 bg-paper p-3 sm:p-6 lg:grid-cols-[420px_minmax(0,1fr)]">
-      <aside className="kente flex flex-col gap-10 rounded-[32px] p-7 text-white">
+      <aside className="kente flex flex-col gap-6 rounded-[24px] p-7 text-white">
         <div className="flex items-center gap-3">
           <Link href="/"><Seal /></Link>
           <span className="text-[15px] text-white/80">
@@ -134,7 +134,7 @@ function ReportWizard() {
         </div>
         <div className="flex flex-col gap-2.5">
           <span className="text-[15px] text-white/75">New incident report · for VASPs, mobile money issuers, payment providers and agents</span>
-          <span className="font-display text-[72px] font-extrabold leading-[0.88] tracking-[-0.055em]">
+          <span className="font-display text-[47px] font-extrabold leading-[0.88] tracking-[-0.055em]">
             Tell it
             <br />
             once.
@@ -189,7 +189,7 @@ function ReportWizard() {
         </div>
       </aside>
 
-      <main className="flex flex-col gap-8 rounded-[32px] bg-white px-6 pb-9 pt-10 sm:px-12">
+      <main className="flex flex-col gap-8 rounded-[24px] bg-white px-6 pb-9 pt-10 sm:px-12">
         <div className="flex items-center justify-between">
           <span className="inline-flex h-[34px] items-center rounded-full bg-paper px-4 text-[13px] font-medium">
             Step {step + 1} of {STEPS.length}
@@ -246,7 +246,7 @@ type StepProps = { draft: ReportDraft; patch: (p: Partial<ReportDraft>) => void 
 function H({ title, sub }: { title: React.ReactNode; sub: string }) {
   return (
     <div className="flex flex-col gap-3.5">
-      <h1 className="font-display text-[clamp(52px,6vw,84px)] font-extrabold leading-[0.9] tracking-[-0.06em]">{title}</h1>
+      <h1 className="font-display text-[clamp(32px,3.7vw,52px)] font-extrabold leading-[0.9] tracking-[-0.06em]">{title}</h1>
       <span className="max-w-[620px] text-[17px] text-muted">{sub}</span>
     </div>
   );
@@ -526,12 +526,12 @@ function Sent({ id, routes, severity, onBoard }: { id: string; routes: ReturnTyp
   const now = usePortal((s) => s.now);
   return (
     <div className="flex min-h-screen flex-col gap-4 bg-paper p-3 sm:p-6">
-      <section className="kente kente-lg flex flex-col gap-8 rounded-[36px] px-8 pb-12 pt-8 text-white sm:px-14">
+      <section className="kente kente-lg flex flex-col gap-8 rounded-[24px] px-8 pb-12 pt-8 text-white sm:px-14">
         <Link href="/"><Seal /></Link>
         <span className="glass inline-flex h-9 items-center gap-2 self-start rounded-full px-4 font-mono text-sm">
           <Check size={15} /> {id}
         </span>
-        <h1 className="font-display text-[clamp(72px,10vw,150px)] font-extrabold leading-[0.85] tracking-[-0.065em]">Sent.</h1>
+        <h1 className="font-display text-[clamp(36px,4.6vw,64px)] font-extrabold leading-[0.85] tracking-[-0.065em]">Sent.</h1>
         <p className="max-w-[640px] text-lg text-white/80">
           {routes.length} authorities received your report at <span className="font-mono">{hhmm(now)}</span>. The Cyber Security Authority will acknowledge within {severity === 1 ? "one hour" : "one working day"}. You will see every step they take.
         </p>

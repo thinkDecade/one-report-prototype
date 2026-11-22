@@ -73,11 +73,11 @@ export default function AckClocks() {
   const worst = rows.find((r) => r.waiting && r.late);
 
   return (
-    <section className="flex flex-col gap-7 rounded-[32px] bg-white px-5 py-7 sm:px-10 sm:py-9">
+    <section className="flex flex-col gap-7 rounded-[24px] bg-white px-5 py-7 sm:px-10 sm:py-9">
       <div className="flex flex-wrap items-start justify-between gap-8">
         <div className="flex max-w-[640px] flex-col gap-2.5">
           <span className="text-sm text-muted">Time to acknowledge · live at {hhmm(now)}</span>
-          <span className="font-display text-[clamp(44px,5vw,64px)] font-extrabold leading-[0.92] tracking-[-0.055em]">
+          <span className="font-display text-[clamp(30px,3.1vw,40px)] font-extrabold leading-[0.92] tracking-[-0.055em]">
             {onTime} of {rows.length} on time.
           </span>
           <span className="text-[17px] text-[#4A4E57]">

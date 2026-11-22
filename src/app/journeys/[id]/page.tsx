@@ -36,17 +36,17 @@ export default function Trigger() {
 
   return (
     <div className="flex min-h-[calc(100vh-72px)] flex-col bg-paper p-3 sm:p-6">
-      <section className="kente flex flex-1 flex-col items-center justify-center gap-10 rounded-[32px] px-5 py-14 text-white">
+      <section className="kente flex flex-1 flex-col items-center justify-center gap-6 rounded-[24px] px-5 py-14 text-white">
         <div className="flex flex-col items-center gap-3 text-center">
           <span className="text-[15px] text-white/70">{j.who}</span>
-          <h1 className="font-display text-[clamp(48px,6vw,80px)] font-extrabold leading-[0.9] tracking-[-0.06em]">
+          <h1 className="font-display text-[clamp(30px,3.7vw,50px)] font-extrabold leading-[0.9] tracking-[-0.06em]">
             {j.trigger.time}.{" "}
             <span className="text-white/60">{j.trigger.channel === "chat" ? "A message comes in." : j.trigger.channel === "alarm" ? "An alarm goes off." : "This arrives."}</span>
           </h1>
         </div>
 
         <div className="w-full max-w-[420px] rounded-[44px] border border-white/25 bg-black/30 p-3 shadow-2xl backdrop-blur">
-          <div className="flex flex-col gap-3 rounded-[34px] bg-[#0B0F17]/80 px-4 pb-6 pt-4">
+          <div className="flex flex-col gap-3 rounded-[24px] bg-[#0B0F17]/80 px-4 pb-6 pt-4">
             <div className="flex justify-between px-2 font-mono text-xs text-white/60">
               <span>{j.trigger.time}</span>
               <span>Sun 22 Nov</span>
