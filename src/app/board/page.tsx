@@ -104,6 +104,7 @@ function Board() {
         <AppNav />
         <div className="flex flex-wrap items-end justify-between gap-8 px-2 sm:px-3">
           <div className="flex min-w-0 flex-col gap-4">
+            <span className="text-[15px] text-white/75">Authority view · for officers at CSA, CID, FIC, BoG, SEC and partner authorities</span>
             <div className="flex flex-wrap gap-2">
               {openCases.map((x) => (
                 <button

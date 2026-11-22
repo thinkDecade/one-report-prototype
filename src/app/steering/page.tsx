@@ -72,7 +72,7 @@ export default function Steering() {
             fast enough?
           </h1>
           <span className="glass inline-flex h-10 items-center gap-2 rounded-full px-4 text-[13px]">
-            <Shield size={16} /> Counts and times only. No personal data.
+            <Shield size={16} /> For heads of authorities. Counts and times only, no personal data.
           </span>
         </div>
       </section>
