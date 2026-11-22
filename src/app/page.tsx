@@ -81,11 +81,14 @@ export default function Landing() {
             </a>
           </div>
           <div className="flex items-center gap-1">
-            <Link href="/check" className="hidden h-11 items-center gap-2 rounded-full border border-white/30 px-6 text-sm hover:bg-white/10 sm:inline-flex">
+            <Link href="/check" className="hidden h-11 items-center gap-2 rounded-full border border-white/30 px-6 text-sm hover:bg-white/10 xl:inline-flex">
               <Search size={15} /> Check a number
             </Link>
-            <Link href="/board" className="inline-flex h-11 items-center rounded-full bg-white px-6 text-sm font-semibold text-ink">
+            <Link href="/board" className="hidden h-11 items-center rounded-full border border-white/30 px-6 text-sm hover:bg-white/10 sm:inline-flex">
               Officer sign-in
+            </Link>
+            <Link href="/journeys" className="inline-flex h-11 items-center rounded-full bg-white px-6 text-sm font-semibold text-ink">
+              See it as…
             </Link>
           </div>
         </nav>
@@ -131,7 +134,10 @@ export default function Landing() {
       <section id="who" className="flex flex-wrap items-end justify-between gap-6 px-2 pt-28 sm:px-6">
         <h2 className="font-display text-[clamp(64px,8vw,120px)] font-extrabold leading-[0.85] tracking-[-0.065em]">Start here</h2>
         <p className="mb-2.5 max-w-[400px] text-[15px] font-medium leading-normal">
-          Hacked on either rail, mobile money or crypto, you are a victim and you report here. Everyone else uses the portal to check, or to act.
+          Hacked on either rail, mobile money or crypto, you are a victim and you report here. Everyone else uses the portal to check, or to act.{" "}
+          <Link href="/journeys" className="underline underline-offset-4">
+            Or follow one person through the drill.
+          </Link>
         </p>
       </section>
 
@@ -258,6 +264,9 @@ export default function Landing() {
             </Link>
             <Link href="/board" className="inline-flex h-[52px] items-center gap-2 rounded-full border border-ink px-7 text-[15px] font-medium hover:bg-paper">
               <Shield size={16} /> Officer sign-in
+            </Link>
+            <Link href="/journeys" className="inline-flex h-[52px] items-center gap-2 rounded-full border border-ink px-7 text-[15px] font-medium hover:bg-paper">
+              See it as… <ArrowRight size={16} />
             </Link>
           </div>
           <div className="flex w-full flex-wrap items-center justify-between gap-4 border-t border-[#E4E3DF] pt-5 text-xs text-muted">

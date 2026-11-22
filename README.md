@@ -8,6 +8,19 @@ A hacked mobile money issuer, exchange or agent files **one report**. It reaches
 
 ## What you can try
 
+Start at **`/journeys` ("See it as…")**. Pick one of six roles and the prototype walks you through that person's part of the drill, from what starts it (the hack, an SMS, an escalation email) to the outcome, with a guided bar at the top.
+
+| Journey | Starts with | Screens |
+| --- | --- | --- |
+| Hacked business | Float reconciliation alarm | `/report` → `/my-case` (follow the case, sign the police report, add evidence) |
+| CSA duty officer | SMS: Level 1 case | `/board` → `/register` → `/alerts/GH-FA-0031` |
+| Partner officer | Email: handed a part | `/task` (only that authority's fields; the rest is locked) |
+| Register approver | Provisional entries to review | `/register` → `/check` |
+| OTC vendor or agent | A buyer's message | `/check` → `/receipts` → `/alerts/GH-FA-0031` |
+| Head or steering | Escalated to you | `/escalations` → `/steering` |
+
+All routes:
+
 | Route | Who | What it shows |
 | --- | --- | --- |
 | `/` | Everyone | Landing page |

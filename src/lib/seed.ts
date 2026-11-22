@@ -15,12 +15,14 @@ export const PERSONAS: Persona[] = [
   { userId: "VASP-0215-02", name: "Daniel Tetteh", title: "Chief Information Security Officer", institution: "VASP-0215", kind: "provider", roles: ["incident officer", "checker"] },
   { userId: "OTC-0442", name: "Kojo Darko", title: "OTC vendor, Kaneshie", institution: "OTC-0442", kind: "otc", roles: ["checker"] },
   { userId: "CSA-0142", name: "Kwame Asante", title: "Duty officer, CERT-GH 24-hour desk", institution: "CSA", kind: "agency", authority: "CSA", roles: ["point person", "approver", "alert issuer"] },
+  { userId: "CSA-0210", name: "Adwoa Boateng", title: "Register desk, CERT-GH", institution: "CSA", kind: "agency", authority: "CSA", roles: ["approver"] },
   { userId: "CID-0031", name: "Insp. Abena Owusu", title: "Point person, Cybercrime Unit", institution: "CID", kind: "agency", authority: "CID", roles: ["point person", "investigator", "approver"] },
   { userId: "FIC-0007", name: "Yaw Boateng", title: "Point person, Analysis & Monitoring", institution: "FIC", kind: "agency", authority: "FIC", roles: ["point person", "approver"] },
   { userId: "BOG-0019", name: "Efua Addo", title: "Point person, Payment Systems", institution: "BOG_PSD", kind: "agency", authority: "BOG_PSD", roles: ["point person", "supervisor"] },
   { userId: "BOG-0027", name: "Nana Ofori", title: "Point person, Virtual Assets Dept", institution: "BOG_VAD", kind: "agency", authority: "BOG_VAD", roles: ["point person"] },
   { userId: "SEC-0011", name: "Ama Serwaa", title: "Point person, Fintech & Innovation", institution: "SEC", kind: "agency", authority: "SEC", roles: ["point person"] },
   { userId: "AGD-0004", name: "Kofi Annan-Mensah", title: "Duty officer, International Cooperation", institution: "AGD", kind: "agency", authority: "AGD", roles: ["point person", "approver"] },
+  { userId: "AGD-HEAD", name: "Ewurabena Quaye", title: "Director, International Cooperation", institution: "AGD", kind: "agency", authority: "AGD", roles: ["head"] },
   { userId: "FCS-0003", name: "Selorm Agbeko", title: "Analyst, FICSOC", institution: "FICSOC", kind: "agency", authority: "FICSOC", roles: ["point person"] },
   { userId: "EOC-0005", name: "Kwesi Badu", title: "Duty officer, Asset Recovery", institution: "EOCO", kind: "agency", authority: "EOCO", roles: ["point person"] },
   { userId: "NCA-0002", name: "Akosua Frimpong", title: "Point person, Numbering & Licensing", institution: "NCA", kind: "agency", authority: "NCA", roles: ["point person"] },
@@ -238,7 +240,7 @@ function drillInProgress() {
     { at: at(5, 40), userId: "FCS-0003", button: "record", code: "Technical indicators shared with financial sector response teams" },
   ]);
   // CSA hands the case on to EOCO for a freezing order at 06:55
-  const eoco = newTask(c.id, tasks.length + 1, "EOCO", "copy", "Full case; freezing order application", c.severity, at(6, 55));
+  const eoco = newTask(c.id, tasks.length + 1, "EOCO", "copy", "Money trail, numbers and containment; freezing order application", c.severity, at(6, 55));
   by("CSA").events.push({ at: at(6, 55), userId: "CSA-0142", button: "hand_on", note: "Added EOCO for a freezing order" });
   tasks.push(eoco);
 

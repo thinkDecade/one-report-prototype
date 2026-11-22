@@ -11,7 +11,6 @@ import {
   Globe,
   Landmark,
   Lock,
-  Search,
   Plus,
   Smartphone,
   Upload,
@@ -549,12 +548,12 @@ function Sent({ id, routes, severity, onBoard }: { id: string; routes: ReturnTyp
         ))}
       </section>
       <div className="flex flex-wrap gap-2 pt-4">
-        <button onClick={onBoard} className="inline-flex h-14 items-center gap-2 rounded-full bg-ink px-8 text-base font-medium text-white">
-          See it on the authorities&apos; board <ArrowRight size={18} />
-        </button>
-        <Link href="/check" className="inline-flex h-14 items-center gap-2 rounded-full border border-ink px-8 text-base font-medium">
-          <Search size={16} /> Try the check register
+        <Link href="/my-case" className="inline-flex h-14 items-center gap-2 rounded-full bg-ink px-8 text-base font-medium text-white">
+          Follow your case <ArrowRight size={18} />
         </Link>
+        <button onClick={onBoard} className="inline-flex h-14 items-center gap-2 rounded-full border border-ink px-8 text-base font-medium">
+          See it on the authorities&apos; board
+        </button>
       </div>
     </div>
   );
