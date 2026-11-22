@@ -19,13 +19,45 @@ export function Star({ size = 18, className }: { size?: number; className?: stri
   );
 }
 
+const RING: [number, number][] = [
+  [32, 9], [48.26, 15.74], [55, 32], [48.26, 48.26], [32, 55], [15.74, 48.26], [9, 32], [15.74, 15.74],
+];
+
+/** One Report mark: one star (the report) ringed by the authorities it reaches. */
+export function Mark({ size = 44, tile = false }: { size?: number; tile?: boolean }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true" className="shrink-0">
+      {tile ? (
+        <rect width="64" height="64" rx="18" fill="#0A2240" />
+      ) : (
+        <circle cx="32" cy="32" r="31" fill="none" stroke="currentColor" strokeOpacity="0.5" strokeWidth="1.2" />
+      )}
+      <circle cx="32" cy="32" r="16.5" fill="none" stroke="currentColor" strokeOpacity={tile ? 0.25 : 0.3} strokeWidth="1" style={tile ? { color: "#fff" } : undefined} />
+      {RING.map(([x, y], i) => (
+        <circle key={i} cx={x} cy={y} r={i === 0 ? 2.8 : 2.1} fill={i === 0 ? "#C9A54C" : tile ? "#FFFFFF" : "currentColor"} fillOpacity={i === 0 ? 1 : 0.75} />
+      ))}
+      <path transform="translate(21.4 20.6) scale(0.88)" d="M12 2.5l2.47 7.6h7.99l-6.46 4.7 2.47 7.6L12 17.7l-6.47 4.7 2.47-7.6-6.46-4.7h7.99z" fill="#C9A54C" />
+    </svg>
+  );
+}
+
 export function Seal({ size = 44 }: { size?: number }) {
   return (
-    <span
-      className="flex shrink-0 items-center justify-center rounded-full border border-white/50"
-      style={{ width: size, height: size }}
-    >
-      <Star size={size * 0.42} />
+    <span className="inline-flex shrink-0 text-white" style={{ width: size, height: size }}>
+      <Mark size={size} />
+    </span>
+  );
+}
+
+/** Mark plus wordmark. */
+export function Logo({ dark = false, size = 40 }: { dark?: boolean; size?: number }) {
+  return (
+    <span className={clsx("inline-flex items-center gap-2.5", dark ? "text-ink" : "text-white")}>
+      {dark ? <Mark size={size} tile /> : <Seal size={size} />}
+      <span className="flex flex-col leading-none">
+        <span className="font-display text-[19px] font-extrabold tracking-[-0.04em]">One Report</span>
+        <span className={clsx("mt-1 text-[10px] font-medium uppercase tracking-[0.14em]", dark ? "text-muted" : "text-white/60")}>Ghana · prototype</span>
+      </span>
     </span>
   );
 }

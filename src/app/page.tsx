@@ -18,7 +18,7 @@ import {
   Clock,
   Wallet,
 } from "lucide-react";
-import { ArrowCircle, GhanaRule, GlassIcon, Seal } from "@/components/ui";
+import { ArrowCircle, GhanaRule, GlassIcon, Logo, Seal } from "@/components/ui";
 
 const SEALS = ["CSA", "CID", "FIC", "BoG", "SEC"];
 
@@ -33,8 +33,8 @@ export default function Landing() {
       <section className="kente kente-lg relative h-[760px] md:h-[960px] overflow-hidden rounded-[36px] text-white">
         <nav className="absolute inset-x-4 top-5 flex items-center justify-between rounded-full border border-white/30 p-1.5 sm:inset-x-8 sm:top-7">
           <div className="flex items-center gap-1">
-            <span className="mr-1">
-              <Seal size={46} />
+            <span className="mr-3">
+              <Logo size={46} />
             </span>
             <Link href="/" className="inline-flex h-[46px] items-center rounded-full bg-white px-7 text-sm font-semibold text-ink">
               Home
@@ -296,9 +296,7 @@ export default function Landing() {
       <section className="kente kente-lg mt-40 flex flex-col items-center overflow-hidden rounded-[36px] px-4 pb-4 pt-16 text-white">
         <div className="flex w-full items-center">
           <div className="h-px flex-1 bg-white/30" />
-          <span className="flex h-16 w-16 items-center justify-center rounded-full border border-white/40 bg-white/10">
-            <Seal size={40} />
-          </span>
+          <Seal size={72} />
           <div className="h-px flex-1 bg-white/30" />
         </div>
         <h2 className="mt-9 text-center font-display text-[clamp(48px,6vw,84px)] font-extrabold leading-[0.95] tracking-[-0.05em]">Ready before the next one.</h2>
@@ -326,8 +324,12 @@ export default function Landing() {
               );
             })}
           </div>
-          <div className="flex w-full flex-wrap items-center justify-between gap-3 border-t border-[#E4E3DF] pt-5 text-xs text-muted">
-            <span>Concept design by CDABI for the Cyber Security Authority. Hosting and data would sit with the state.</span>
+          <div className="flex w-full flex-wrap items-center justify-between gap-4 border-t border-[#E4E3DF] pt-5 text-xs text-muted">
+            <span className="flex items-center gap-4">
+              <Logo dark size={36} />
+              <span className="hidden h-8 w-px bg-[#E4E3DF] sm:block" />
+              <span className="max-w-[420px]">Concept design by CDABI for the Cyber Security Authority. Hosting and data would sit with the state.</span>
+            </span>
             <GhanaRule />
           </div>
         </div>
