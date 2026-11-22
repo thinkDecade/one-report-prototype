@@ -10,6 +10,7 @@ import { personaById } from "@/lib/seed";
 import { initials } from "@/lib/format";
 
 const LINKS = [
+  { href: "/journeys", label: "See it as…" },
   { href: "/report", label: "File a report" },
   { href: "/check", label: "Check a number" },
   { href: "/board", label: "Authority view" },
@@ -39,7 +40,7 @@ export default function AppNav() {
               key={l.href}
               href={l.href}
               className={clsx(
-                "hidden h-11 items-center rounded-full px-5 text-sm transition-colors md:inline-flex",
+                "hidden h-11 items-center rounded-full px-5 text-sm transition-colors lg:inline-flex",
                 active ? "bg-white font-semibold text-ink" : "border border-white/30 hover:bg-white/10"
               )}
             >

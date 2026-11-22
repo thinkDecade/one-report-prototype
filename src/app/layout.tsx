@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import DemoBar from "@/components/DemoBar";
+import JourneyBar from "@/components/JourneyBar";
 
 export const metadata: Metadata = {
   title: "One Report · Ghana incident reporting portal (prototype)",
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
       </head>
       <body>
+        <JourneyBar />
         {children}
         <DemoBar />
       </body>

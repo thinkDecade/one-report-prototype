@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { AuditRecord, AuthorityCode, CaseRecord, CheckRecord, FraudAlert, RegisterEntry, Task, TaskEvent } from "./types";
+import type { AuditRecord, AuthorityCode, CaseRecord, CheckRecord, Exhibit, FraudAlert, RegisterEntry, Task, TaskEvent } from "./types";
 import { seedState, institutionById, personaById } from "./seed";
 import { createCase, newTask, type ReportDraft } from "./cases";
 import { lookupKey, normaliseIdentifier, sha256 } from "./hash";
@@ -22,14 +22,20 @@ export interface PortalState {
   audit: AuditRecord[];
   seq: number;
   readAlerts: string[];
+  journey: { id: string; step: number } | null;
+  signedReports: string[];
 
+  setJourney: (j: { id: string; step: number } | null) => void;
+  setClock: (t: number) => void;
+  signPoliceReport: (caseId: string) => void;
+  addExhibits: (caseId: string, ex: Exhibit[]) => void;
   setPersona: (id: string) => void;
   advance: (minutes: number) => void;
   reset: (mode: "live" | "fresh") => void;
   submitReport: (draft: ReportDraft) => string;
   taskAction: (taskId: string, button: TaskEvent["button"], opts?: { code?: string; note?: string; to?: AuthorityCode }) => void;
   confirmEntry: (entryId: string) => void;
-  dropEntry: (entryId: string) => void;
+  dropEntry: (entryId: string, note?: string) => void;
   runCheck: (raw: string) => CheckRecord | { error: string };
   issueAlert: (caseId: string) => string | null;
   markAlertRead: (id: string) => void;
@@ -53,7 +59,21 @@ export const usePortal = create<PortalState>()(
       ...seedState("live"),
       personaId: "CSA-0142",
       readAlerts: [],
+      journey: null,
+      signedReports: [],
 
+      setJourney: (j) => set({ journey: j }),
+      setClock: (t) => set({ now: t }),
+      signPoliceReport: (caseId) =>
+        set((s) => ({
+          signedReports: s.signedReports.includes(caseId) ? s.signedReports : [...s.signedReports, caseId],
+          audit: addAudit(s.audit, s.now, s.personaId, "Police complaint report signed", caseId),
+        })),
+      addExhibits: (caseId, ex) =>
+        set((s) => ({
+          cases: s.cases.map((c) => (c.id === caseId ? { ...c, exhibits: [...c.exhibits, ...ex] } : c)),
+          audit: addAudit(s.audit, s.now, s.personaId, `Evidence added (${ex.length})`, caseId),
+        })),
       setPersona: (id) => set({ personaId: id }),
       advance: (minutes) => set((s) => ({ now: s.now + minutes * M })),
       reset: (mode) =>
@@ -61,6 +81,7 @@ export const usePortal = create<PortalState>()(
           ...seedState(mode),
           personaId: mode === "fresh" ? "EMI-0004-01" : "CSA-0142",
           readAlerts: [],
+          signedReports: [],
         }),
 
       submitReport: (draft) => {
@@ -93,6 +114,7 @@ export const usePortal = create<PortalState>()(
           updated.state = "acted";
         }
         if (button === "decline") updated.state = "declined";
+        if (button === "assign" && opts.note) updated.assignedTo = opts.note;
         let tasks = s.tasks.map((x) => (x.id === taskId ? updated : x));
         if (button === "hand_on" && opts.to) {
           const c = s.cases.find((x) => x.id === t.caseId)!;
@@ -121,10 +143,10 @@ export const usePortal = create<PortalState>()(
           audit: addAudit(s.audit, s.now, s.personaId, "Register entry confirmed", entryId),
         })),
 
-      dropEntry: (entryId) =>
+      dropEntry: (entryId, note) =>
         set((s) => ({
           entries: s.entries.map((e) =>
-            e.id === entryId ? { ...e, status: "dropped" as const, history: [...e.history, { at: s.now, userId: s.personaId, action: "Dropped by approver" }] } : e
+            e.id === entryId ? { ...e, status: "dropped" as const, history: [...e.history, { at: s.now, userId: s.personaId, action: "Dropped by approver", note }] } : e
           ),
           audit: addAudit(s.audit, s.now, s.personaId, "Register entry dropped", entryId),
         })),

@@ -22,8 +22,8 @@ export default function DemoBar() {
   const hydrated = useHydrated();
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const { now, personaId, setPersona, advance, reset } = usePortal();
-  if (!hydrated) return null;
+  const { now, personaId, setPersona, advance, reset, journey } = usePortal();
+  if (!hydrated || journey) return null;
   const p = personaById(personaId);
 
   return (
