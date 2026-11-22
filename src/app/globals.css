@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Outfit", "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Outfit", "Helvetica Neue", Arial, sans-serif;
+  --font-ui: "Geist", "Inter", system-ui, sans-serif;
+  --font-mono: "Geist Mono", "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-navy: #0a2240;
+  --color-navy-2: #0e2c52;
+  --color-paper: #eeedea;
+  --color-ink: #0b0f17;
+  --color-muted: #6b6f78;
+  --color-gold: #c9a54c;
+  --color-gold-soft: #f6eed8;
+
+  --color-received: #2563eb;
+  --color-acked: #eab308;
+  --color-acted: #16a34a;
+  --color-overdue: #dc2626;
+}
+
+html,
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Navy kente weave, used in place of photography */
+.kente {
+  background-color: #0a2240;
+  background-image:
+    radial-gradient(ellipse at 72% 18%, rgba(10, 34, 64, 0) 0%, rgba(3, 10, 22, 0.55) 72%),
+    linear-gradient(180deg, rgba(3, 10, 22, 0) 45%, rgba(3, 10, 22, 0.7) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Crect width='96' height='96' fill='%230A2240'/%3E%3Crect width='48' height='48' fill='%230E2C52'/%3E%3Crect x='48' y='48' width='48' height='48' fill='%230E2C52'/%3E%3Cg fill='%23163C69'%3E%3Crect y='10' width='48' height='3'/%3E%3Crect y='22' width='48' height='3'/%3E%3Crect y='34' width='48' height='3'/%3E%3Crect x='58' width='3' height='48'/%3E%3Crect x='70' width='3' height='48'/%3E%3Crect x='82' width='3' height='48'/%3E%3Crect x='10' y='48' width='3' height='48'/%3E%3Crect x='22' y='48' width='3' height='48'/%3E%3Crect x='34' y='48' width='3' height='48'/%3E%3Crect x='48' y='58' width='48' height='3'/%3E%3Crect x='48' y='70' width='48' height='3'/%3E%3Crect x='48' y='82' width='48' height='3'/%3E%3C/g%3E%3Cg fill='%23C9A54C' fill-opacity='.22'%3E%3Crect y='47' width='96' height='1.5'/%3E%3Crect x='47' width='1.5' height='96'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: auto, auto, 128px 128px;
+}
+.kente-lg {
+  background-size: auto, auto, 168px 168px;
+}
+.kente-sm {
+  background-size: auto, auto, 72px 72px;
+}
+.ripple {
+  background-color: #0a2240;
+  background-image:
+    linear-gradient(180deg, rgba(3, 10, 22, 0) 40%, rgba(3, 10, 22, 0.7) 100%),
+    radial-gradient(circle at 78% 26%, rgba(201, 165, 76, 0.22), rgba(201, 165, 76, 0) 34%),
+    repeating-radial-gradient(circle at 78% 26%, #123660 0 1.5px, #0a2240 1.5px 20px);
+}
+.weave {
+  background-color: #0a2240;
+  background-image:
+    linear-gradient(180deg, rgba(3, 10, 22, 0) 40%, rgba(3, 10, 22, 0.75) 100%),
+    repeating-linear-gradient(-45deg, rgba(22, 60, 105, 0.7) 0 2px, rgba(0, 0, 0, 0) 2px 22px),
+    repeating-linear-gradient(45deg, #0e2c52 0 11px, #0a2240 11px 22px);
+}
+.dots {
+  background-color: #0a2240;
+  background-image:
+    linear-gradient(180deg, rgba(3, 10, 22, 0) 30%, rgba(3, 10, 22, 0.6) 100%),
+    radial-gradient(#21497c 1.3px, rgba(0, 0, 0, 0) 1.7px);
+  background-size: auto, 16px 16px;
+}
+.glass {
+  background: rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Corner notch used on the landing hero */
+.notch-corner {
+  background: radial-gradient(circle at 0 0, rgba(238, 237, 234, 0) 31.5px, #eeedea 32px);
+}
+
+:focus-visible {
+  outline: 2px solid #c9a54c;
+  outline-offset: 2px;
+}

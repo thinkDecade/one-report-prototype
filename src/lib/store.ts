@@ -1,0 +1,185 @@
+"use client";
+
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import type { AuditRecord, AuthorityCode, CaseRecord, CheckRecord, FraudAlert, RegisterEntry, Task, TaskEvent } from "./types";
+import { seedState, institutionById, personaById } from "./seed";
+import { createCase, newTask, type ReportDraft } from "./cases";
+import { lookupKey, normaliseIdentifier, sha256 } from "./hash";
+import { formatIdentifier } from "./format";
+
+const M = 60_000;
+const D = 24 * 60 * M;
+
+export interface PortalState {
+  now: number;
+  personaId: string;
+  cases: CaseRecord[];
+  tasks: Task[];
+  entries: RegisterEntry[];
+  alerts: FraudAlert[];
+  checks: CheckRecord[];
+  audit: AuditRecord[];
+  seq: number;
+  readAlerts: string[];
+
+  setPersona: (id: string) => void;
+  advance: (minutes: number) => void;
+  reset: (mode: "live" | "fresh") => void;
+  submitReport: (draft: ReportDraft) => string;
+  taskAction: (taskId: string, button: TaskEvent["button"], opts?: { code?: string; note?: string; to?: AuthorityCode }) => void;
+  confirmEntry: (entryId: string) => void;
+  dropEntry: (entryId: string) => void;
+  runCheck: (raw: string) => CheckRecord | { error: string };
+  issueAlert: (caseId: string) => string | null;
+  markAlertRead: (id: string) => void;
+}
+
+function addAudit(audit: AuditRecord[], at: number, userId: string, action: string, object: string): AuditRecord[] {
+  const prev = audit[audit.length - 1];
+  const prevHash = prev ? prev.hash : "0".repeat(64);
+  const seq = (prev?.seq ?? 0) + 1;
+  const hash = sha256([seq, at, userId, action, object, prevHash].join("|"));
+  return [...audit, { seq, at, userId, action, object, prevHash, hash }];
+}
+
+function receiptNo(at: number, n: number) {
+  return "OC-" + String(2229183 + n + Math.floor((at / 1000) % 97)).padStart(7, "0");
+}
+
+export const usePortal = create<PortalState>()(
+  persist(
+    (set, get) => ({
+      ...seedState("live"),
+      personaId: "CSA-0142",
+      readAlerts: [],
+
+      setPersona: (id) => set({ personaId: id }),
+      advance: (minutes) => set((s) => ({ now: s.now + minutes * M })),
+      reset: (mode) =>
+        set({
+          ...seedState(mode),
+          personaId: mode === "fresh" ? "EMI-0004-01" : "CSA-0142",
+          readAlerts: [],
+        }),
+
+      submitReport: (draft) => {
+        const s = get();
+        const inst = institutionById(draft.providerId);
+        const { case: c, tasks, entries } = createCase(draft, s.seq, s.now, inst?.kind ?? "EMI");
+        set({
+          cases: [c, ...s.cases],
+          tasks: [...tasks, ...s.tasks],
+          entries: [...entries, ...s.entries],
+          seq: s.seq + 1,
+          audit: addAudit(s.audit, s.now, draft.filer, "Case filed and routed", c.id),
+        });
+        return c.id;
+      },
+
+      taskAction: (taskId, button, opts = {}) => {
+        const s = get();
+        const t = s.tasks.find((x) => x.id === taskId);
+        if (!t) return;
+        const ev: TaskEvent = { at: s.now, userId: s.personaId, button, code: opts.code, note: opts.note };
+        const updated: Task = { ...t, events: [...t.events, ev] };
+        if (button === "acknowledge") {
+          updated.state = "acknowledged";
+          updated.acknowledgedAt = s.now;
+          updated.assignedTo = s.personaId;
+        }
+        if (button === "record") {
+          if (!updated.acknowledgedAt) updated.acknowledgedAt = s.now;
+          updated.state = "acted";
+        }
+        if (button === "decline") updated.state = "declined";
+        let tasks = s.tasks.map((x) => (x.id === taskId ? updated : x));
+        if (button === "hand_on" && opts.to) {
+          const c = s.cases.find((x) => x.id === t.caseId)!;
+          const n = tasks.filter((x) => x.caseId === c.id).length + 1;
+          const nt = newTask(c.id, n, opts.to, "copy", "Handed on: " + (opts.note || "relevant parts of the case"), c.severity, s.now);
+          tasks = [nt, ...tasks];
+        }
+        const cases = s.cases.map((c) => (c.id === t.caseId && c.status === "submitted" ? { ...c, status: "active" as const } : c));
+        set({ tasks, cases, audit: addAudit(s.audit, s.now, s.personaId, `Task ${button}${opts.code ? ": " + opts.code : ""}`, taskId) });
+      },
+
+      confirmEntry: (entryId) =>
+        set((s) => ({
+          entries: s.entries.map((e) =>
+            e.id === entryId
+              ? {
+                  ...e,
+                  status: "confirmed" as const,
+                  confirmedBy: s.personaId,
+                  confirmedAt: s.now,
+                  expiresAt: s.now + 30 * D,
+                  history: [...e.history, { at: s.now, userId: s.personaId, action: "Confirmed" }],
+                }
+              : e
+          ),
+          audit: addAudit(s.audit, s.now, s.personaId, "Register entry confirmed", entryId),
+        })),
+
+      dropEntry: (entryId) =>
+        set((s) => ({
+          entries: s.entries.map((e) =>
+            e.id === entryId ? { ...e, status: "dropped" as const, history: [...e.history, { at: s.now, userId: s.personaId, action: "Dropped by approver" }] } : e
+          ),
+          audit: addAudit(s.audit, s.now, s.personaId, "Register entry dropped", entryId),
+        })),
+
+      runCheck: (raw) => {
+        const s = get();
+        const n = normaliseIdentifier(raw);
+        if (!n) return { error: "That doesn't look like a Ghana mobile number, bank account or wallet address." };
+        const key = lookupKey(n.value);
+        const live = s.entries.filter((e) => e.lookupKey === key && e.expiresAt > s.now);
+        const answer: CheckRecord["answer"] = live.some((e) => e.status === "confirmed")
+          ? "reported"
+          : live.some((e) => e.status === "provisional" || e.status === "held")
+            ? "unconfirmed"
+            : "none";
+        const persona = personaById(s.personaId);
+        const rec: CheckRecord = {
+          receipt: receiptNo(s.now, s.checks.length + 1),
+          userId: s.personaId,
+          institution: persona?.institution ?? s.personaId,
+          lookupKey: key,
+          display: formatIdentifier(n.value),
+          answer,
+          at: s.now,
+          channel: "mobile",
+        };
+        set({ checks: [rec, ...s.checks], audit: addAudit(s.audit, s.now, s.personaId, "Register check: " + answer, rec.receipt) });
+        return rec;
+      },
+
+      issueAlert: (caseId) => {
+        const s = get();
+        const c = s.cases.find((x) => x.id === caseId);
+        if (!c) return null;
+        const ids = s.entries.filter((e) => e.caseId === caseId && (e.status === "confirmed" || e.status === "provisional")).map((e) => e.id);
+        const nums = s.alerts.filter((a) => a.kind === "urgent").map((a) => parseInt(a.id.split("-").pop() || "0", 10));
+        const n = Math.max(30, ...nums) + 1;
+        const id = "GH-FA-" + String(n).padStart(4, "0");
+        const alert: FraudAlert = {
+          id,
+          kind: "urgent",
+          title: c.crossRail ? "Stolen funds are being converted across rails" : "Stolen funds are moving: " + c.title,
+          caseId,
+          entryIds: ids,
+          issuedBy: s.personaId,
+          issuedAt: s.now,
+          cancelledEntryIds: [],
+          text: "Do not trade with these. Check every buyer before you sell today.",
+        };
+        set({ alerts: [alert, ...s.alerts], audit: addAudit(s.audit, s.now, s.personaId, "Fraud alert issued", id) });
+        return id;
+      },
+
+      markAlertRead: (id) => set((s) => (s.readAlerts.includes(id) ? s : { readAlerts: [...s.readAlerts, id] })),
+    }),
+    { name: "one-report-prototype-v1" }
+  )
+);
