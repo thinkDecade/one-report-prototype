@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { Bell } from "lucide-react";
-import { Seal } from "./ui";
+import { Logo, Seal } from "./ui";
 import { usePortal } from "@/lib/store";
 import { personaById } from "@/lib/seed";
 import { initials } from "@/lib/format";
@@ -24,8 +24,13 @@ export default function AppNav() {
   return (
     <nav className="flex items-center justify-between gap-3 rounded-full border border-white/30 p-1.5 text-white">
       <div className="flex items-center gap-1">
-        <Link href="/" aria-label="One Report home" className="mr-1">
-          <Seal />
+        <Link href="/" aria-label="One Report home" className="mr-3">
+          <span className="hidden xl:inline-flex">
+            <Logo size={44} />
+          </span>
+          <span className="xl:hidden">
+            <Seal />
+          </span>
         </Link>
         {LINKS.map((l) => {
           const active = path.startsWith(l.href);
