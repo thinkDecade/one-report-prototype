@@ -134,7 +134,7 @@ function ReportWizard() {
           </span>
         </div>
         <div className="flex flex-col gap-2.5">
-          <span className="text-[15px] text-white/75">New incident report</span>
+          <span className="text-[15px] text-white/75">New incident report · for VASPs, mobile money issuers, payment providers and agents</span>
           <span className="font-display text-[72px] font-extrabold leading-[0.88] tracking-[-0.055em]">
             Tell it
             <br />
@@ -259,7 +259,7 @@ const label = "flex flex-col gap-2 text-sm font-medium";
 function StepHappened({ draft, patch }: StepProps) {
   return (
     <>
-      <H title={<>What happened?</>} sub="A short name and the kind of incident. You can be unsure. Say what you know and what you suspect." />
+      <H title={<>What happened?</>} sub="Hacked on either rail, you are a victim and you report here. Give it a short name and say what you know and what you suspect. You can add more later." />
       <label className={label}>
         Short name for this incident
         <input className={field} value={draft.title} onChange={(e) => patch({ title: e.target.value })} placeholder="For example: SIM swap on agent float" />

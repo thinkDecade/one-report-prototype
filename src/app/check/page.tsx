@@ -83,7 +83,7 @@ export default function CheckPage() {
         </div>
         <span className="pl-1 font-display text-[64px] font-extrabold leading-[0.85] tracking-[-0.06em]">Check</span>
         <span className="-mt-2 pl-1 text-[13px] text-white/75">
-          {persona?.name} · {persona?.kind === "otc" ? "OTC vendor" : persona?.institution}
+          For agents, OTC vendors, issuers, VASPs and banks · signed in as {persona?.name}
         </span>
         <form
           onSubmit={(e) => {
