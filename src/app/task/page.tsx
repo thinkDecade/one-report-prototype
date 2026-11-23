@@ -66,7 +66,7 @@ export default function MyTask() {
       <div className="min-h-screen bg-paper p-3 sm:p-6">
         <section className="kente flex flex-col gap-6 rounded-[24px] px-4 pb-10 pt-5 text-white sm:px-6">
           <AppNav />
-          <h1 className="px-3 font-display text-4xl font-extrabold tracking-[-0.055em]">No tasks for you.</h1>
+          <h1 className="px-3 font-display text-[34px] font-extrabold tracking-[-0.035em]">No tasks for you.</h1>
           <span className="px-3 text-white/75">Switch to an authority officer in the prototype controls to see their task.</span>
         </section>
       </div>

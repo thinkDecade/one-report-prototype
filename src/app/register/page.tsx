@@ -36,8 +36,8 @@ export default function Register() {
         <div className="flex flex-wrap items-end justify-between gap-6 px-2 sm:px-3">
           <div className="flex flex-col gap-3">
             <span className="text-[15px] text-white/75">Check register · approver desk · signed in as {persona?.name}</span>
-            <h1 className="font-display text-[clamp(30px,3.7vw,52px)] font-extrabold leading-[0.9] tracking-[-0.06em]">
-              {groups.review.length ? `${groups.review.length} to review.` : "Nothing to review."}
+            <h1 className="font-display text-[clamp(28px,2.6vw,38px)] font-extrabold leading-[1.05] tracking-[-0.035em]">
+              {groups.review.length ? `${groups.review.length} entries to review` : "No entries to review"}
             </h1>
           </div>
           <div className="glass flex max-w-[420px] items-start gap-3 rounded-[22px] px-4 py-3.5 text-sm leading-snug">

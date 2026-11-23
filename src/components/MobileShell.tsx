@@ -13,9 +13,9 @@ export default function MobileShell({ children }: { children: React.ReactNode })
   const path = usePathname();
   const unread = usePortal((s) => s.alerts.filter((a) => a.kind === "urgent" && !s.readAlerts.includes(a.id)).length);
   const tabs = [
-    { href: "/check", label: "Check", long: "Check a number or wallet", icon: Search },
-    { href: "/alerts", label: "Alerts", long: "Alerts", icon: Bell, badge: unread },
-    { href: "/receipts", label: "Receipts", long: "My receipts", icon: Receipt },
+    { href: "/check", label: "Check", long: "Check the register", icon: Search },
+    { href: "/alerts", label: "Alerts", long: "Fraud alerts", icon: Bell, badge: unread },
+    { href: "/receipts", label: "Receipts", long: "Check receipts", icon: Receipt },
   ];
   return (
     <div className="flex min-h-screen flex-col gap-3 bg-paper p-2.5 pb-28 lg:p-6 lg:pb-24">
@@ -39,7 +39,6 @@ export default function MobileShell({ children }: { children: React.ReactNode })
               </Link>
             );
           })}
-          <span className="px-3 pt-3 text-xs leading-relaxed text-muted">On a phone these open as a simple app with tabs at the bottom.</span>
         </aside>
         <main className="flex min-w-0 flex-1 flex-col gap-2.5 lg:max-w-[820px] lg:gap-3">{children}</main>
       </div>

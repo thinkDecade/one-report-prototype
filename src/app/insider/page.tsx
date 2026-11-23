@@ -58,7 +58,7 @@ export default function InsiderReport() {
             <span className="flex h-14 w-14 items-center justify-center rounded-full bg-ink text-white">
               <Check size={24} />
             </span>
-            <h1 className="font-display text-[clamp(32px,3.7vw,52px)] font-extrabold leading-[0.9] tracking-[-0.06em]">Received.</h1>
+            <h1 className="font-display text-[clamp(28px,2.6vw,38px)] font-extrabold leading-[1.05] tracking-[-0.035em]">Report received</h1>
             <p className="max-w-[560px] text-[17px] text-muted">
               Your reference is <span className="font-mono text-ink">{sent}</span>. Keep it. If you left no contact, you can use it to add information later. Your company has not been told.
             </p>
@@ -69,7 +69,7 @@ export default function InsiderReport() {
         ) : (
           <>
             <div className="flex flex-col gap-3.5">
-              <h1 className="font-display text-[clamp(32px,3.7vw,52px)] font-extrabold leading-[0.9] tracking-[-0.06em]">What is going on?</h1>
+              <h1 className="font-display text-[clamp(28px,2.6vw,38px)] font-extrabold leading-[1.05] tracking-[-0.035em]">Report suspected insider involvement</h1>
               <span className="max-w-[620px] text-[17px] text-muted">
                 If you think someone inside a VASP, issuer, payment provider or agent network is helping thieves, tell us here.
               </span>

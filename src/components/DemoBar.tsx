@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
 import { Clock, FastForward, RotateCcw, Play, ChevronDown, X } from "lucide-react";
 import { usePortal } from "@/lib/store";
-import { PERSONAS, personaById } from "@/lib/seed";
+import { PERSONAS } from "@/lib/seed";
 import { dayTime } from "@/lib/format";
 import { useHydrated } from "./ui";
 
@@ -22,12 +22,12 @@ export default function DemoBar() {
   const hydrated = useHydrated();
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const path = usePathname();
   const { now, personaId, setPersona, advance, reset, journey } = usePortal();
-  if (!hydrated || journey) return null;
-  const p = personaById(personaId);
+  if (!hydrated || journey || path === "/" || path === "/demo") return null;
 
   return (
-    <div className="fixed bottom-24 right-3 z-50 font-ui sm:bottom-4 sm:right-4 text-[13px] text-zinc-950">
+    <div className="fixed bottom-24 left-3 z-50 font-ui text-[13px] text-zinc-950 sm:bottom-4 sm:left-4">
       {open ? (
         <div className="w-[340px] rounded-xl border border-zinc-200 bg-white shadow-lg">
           <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-3">
@@ -110,12 +110,11 @@ export default function DemoBar() {
       ) : (
         <button
           onClick={() => setOpen(true)}
-          className="inline-flex h-10 items-center gap-2 rounded-full border border-zinc-200 bg-white pl-3 pr-2 shadow-lg hover:bg-zinc-50"
+          className="inline-flex h-8 items-center gap-2 rounded-full border border-zinc-200 bg-white/95 pl-2.5 pr-2 text-xs shadow-sm backdrop-blur hover:bg-zinc-50"
         >
           <span className="h-2 w-2 rounded-full bg-gold" />
           <span className="hidden font-medium sm:inline">Prototype</span>
           <span className="font-mono text-zinc-500">{dayTime(now).split(", ")[1]}</span>
-          <span className="hidden text-zinc-500 sm:inline">· {p?.name}</span>
           <ChevronDown size={14} className="text-zinc-500" />
         </button>
       )}

@@ -35,8 +35,8 @@ export default function Escalations() {
               Escalated to you · {persona?.name}, {persona?.title}
               {a ? `, ${AUTHORITIES[a].name}` : ""}
             </span>
-            <h1 className="font-display text-[clamp(30px,3.7vw,52px)] font-extrabold leading-[0.9] tracking-[-0.06em]">
-              {items.length ? `${items.length} task${items.length === 1 ? "" : "s"} need${items.length === 1 ? "s" : ""} you.` : "Nothing needs you."}
+            <h1 className="font-display text-[clamp(28px,2.6vw,38px)] font-extrabold leading-[1.05] tracking-[-0.035em]">
+              {items.length ? `${items.length} escalated task${items.length === 1 ? "" : "s"}` : "No escalated tasks"}
             </h1>
           </div>
           <span className="glass inline-flex h-10 items-center gap-2 rounded-full px-4 text-[13px]">

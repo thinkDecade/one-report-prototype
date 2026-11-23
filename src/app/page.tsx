@@ -4,22 +4,18 @@ import Link from "next/link";
 import {
   ArrowRight,
   ArrowRightLeft,
-  Bell,
   ChartColumn,
   Check,
   EyeOff,
   FileText,
   Fingerprint,
   Landmark,
-  Phone,
   Search,
   Shield,
   ShieldCheck,
-  TriangleExclamationPoint,
   UserRound,
 } from "lucide-react";
-import { GhanaRule, Logo, useHydrated } from "@/components/ui";
-import { usePortal } from "@/lib/store";
+import { GhanaRule, Logo } from "@/components/ui";
 import Capabilities from "@/components/Capabilities";
 import HowItWorks from "@/components/HowItWorks";
 
@@ -32,58 +28,57 @@ const WHAT = [
 const AUDIENCES = [
   {
     icon: FileText,
-    who: "Hacked businesses",
-    detail: "VASPs, mobile money issuers, payment providers and agents",
+    who: "Reporting institutions",
+    detail: "Virtual asset service providers, electronic money issuers, payment service providers and agents",
     gets: [
-      "File once in about 15 minutes, instead of separate notices to each regulator and the police",
-      "Evidence is fingerprinted on upload, so it holds up in court",
-      "Follow your case: who acknowledged it, what was frozen, what is still needed from you",
-      "CID drafts the police complaint report for you to sign",
+      "Submit one structured report instead of separate notices to each authority",
+      "Evidence is fingerprinted and time-stamped on submission",
+      "Track acknowledgements, actions taken and outstanding requests on the case record",
+      "Receive a draft police complaint report for review and signature",
     ],
     cta: "Report an incident",
     href: "/report",
     journey: "reporter",
-    primary: true,
   },
   {
     icon: Search,
     who: "Agents, OTC desks and banks",
-    detail: "Anyone about to pay out, sell crypto or open an account",
+    detail: "Businesses about to pay out, exchange virtual assets or open an account",
     gets: [
-      "Check one number, account or wallet in seconds before you transact",
-      "Three plain answers: none found, unconfirmed or reported",
-      "A receipt that proves you checked in good faith",
-      "Urgent alerts, and a warning if something you checked is reported later",
+      "Check a mobile money number, bank account or wallet address before transacting",
+      "Receive one of three status responses: no report, unconfirmed or reported",
+      "Keep a receipt as a record of the check",
+      "Receive urgent alerts, including when a checked identifier is reported later",
     ],
-    cta: "Check a number",
+    cta: "Check the register",
     href: "/check",
     journey: "otc",
   },
   {
     icon: Shield,
     who: "Authority officers",
-    detail: "CSA, CID, FIC, Bank of Ghana, SEC, AG, EOCO, NCA and others",
+    detail: "CSA, Police CID, FIC, Bank of Ghana, SEC, Attorney-General's Department, EOCO, NCA and others",
     gets: [
-      "Your task arrives with only the fields your mandate allows",
-      "Four buttons: acknowledge, record action, hand on, decline",
-      "The Cyber Security Authority leads and sees the whole case",
-      "Every action is logged in a tamper-evident record",
+      "Receive only the information your mandate allows",
+      "Acknowledge, record action, hand on or decline each task",
+      "The Cyber Security Authority leads and sees the full case",
+      "Every action is written to a tamper-evident audit record",
     ],
-    cta: "Open your task",
+    cta: "Open the officer view",
     href: "/task",
     journey: "partner",
   },
   {
     icon: ChartColumn,
-    who: "Heads and the steering group",
-    detail: "Heads of authorities and the oversight group",
+    who: "Heads of authorities and oversight",
+    detail: "Heads of participating authorities and the steering group",
     gets: [
-      "Escalations reach you at twice the target, with one clear action",
-      "Acknowledgement clocks for every authority, side by side",
-      "Register accuracy: what was confirmed, dropped or lapsed",
-      "Counts and times only, no personal data",
+      "Escalations arrive at twice the target time, with a single required action",
+      "Acknowledgement times for every authority on one view",
+      "Register accuracy: entries confirmed, dropped or lapsed",
+      "Aggregate counts and times only, with no personal data",
     ],
-    cta: "See the steering view",
+    cta: "Open the oversight view",
     href: "/steering",
     journey: "head",
   },
@@ -91,15 +86,13 @@ const AUDIENCES = [
 
 
 const SAFEGUARDS = [
-  { icon: Fingerprint, title: "Sealed evidence", text: "Every file is fingerprinted and time-stamped on arrival." },
-  { icon: EyeOff, title: "Need to know", text: "Each authority sees only its part. Other businesses only see a check answer." },
-  { icon: ShieldCheck, title: "Never “clean”", text: "A check never says a number is safe. A clear check is not a guarantee." },
-  { icon: Landmark, title: "No new powers", text: "The portal carries requests. Freezes stay with the FIC, EOCO and the courts." },
+  { icon: Fingerprint, title: "Evidence integrity", text: "Files are fingerprinted with SHA-256 and time-stamped on submission, with a chain-of-custody record." },
+  { icon: EyeOff, title: "Need-to-know access", text: "Each authority sees only the fields its mandate allows. Businesses see a check status only." },
+  { icon: ShieldCheck, title: "No clearance statements", text: "The register never certifies an identifier as safe. A check with no report is not a guarantee." },
+  { icon: Landmark, title: "Existing legal powers", text: "The platform carries requests. Freezing and seizure remain with the FIC, EOCO and the courts." },
 ];
 
 export default function Landing() {
-  const hydrated = useHydrated();
-  const alert = usePortal((s) => s.alerts.find((a) => a.kind === "urgent"));
   return (
     <div className="flex flex-col bg-paper px-3 pb-6 pt-3 text-ink sm:px-6">
       <p className="pb-3 text-center text-xs text-muted">
@@ -114,13 +107,13 @@ export default function Landing() {
               <Logo size={40} />
             </span>
             <a href="#what" className="hidden h-10 items-center rounded-full px-4 text-sm hover:bg-white/10 lg:inline-flex">
-              What it is
+              Overview
             </a>
             <a href="#platform" className="hidden h-10 items-center rounded-full px-4 text-sm hover:bg-white/10 lg:inline-flex">
               Platform
             </a>
             <a href="#who" className="hidden h-10 items-center rounded-full px-4 text-sm hover:bg-white/10 lg:inline-flex">
-              Who it&apos;s for
+              Participants
             </a>
             <a href="#how" className="hidden h-10 items-center rounded-full px-4 text-sm hover:bg-white/10 lg:inline-flex">
               How it works
@@ -128,7 +121,7 @@ export default function Landing() {
           </div>
           <div className="flex items-center gap-1">
             <Link href="/journeys" className="hidden h-10 items-center rounded-full border border-white/30 px-4 text-sm hover:bg-white/10 md:inline-flex">
-              See it as…
+              Walkthroughs
             </Link>
             <Link href="/task" className="hidden h-10 items-center rounded-full border border-white/30 px-4 text-sm hover:bg-white/10 sm:inline-flex">
               Officer sign-in
@@ -140,15 +133,6 @@ export default function Landing() {
         </nav>
 
         <div className="mx-auto flex w-full max-w-[1100px] flex-col gap-7 px-2">
-          {hydrated && alert && (
-            <Link href={`/alerts/${alert.id}`} className="glass flex w-fit max-w-full items-center gap-2.5 rounded-full py-1.5 pl-1.5 pr-4 text-[13px] hover:bg-white/15">
-              <span className="inline-flex h-6 shrink-0 items-center gap-1 rounded-full bg-gold px-2.5 text-[11px] font-bold text-ink">
-                <TriangleExclamationPoint size={12} /> {alert.id}
-              </span>
-              <span className="truncate">Live drill: urgent alert on stolen funds turned into USDT</span>
-              <ArrowRight size={14} className="shrink-0" />
-            </Link>
-          )}
           <div className="flex flex-col gap-5">
             <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">Virtual asset financial crime response platform</span>
             <h1 className="max-w-[820px] font-display text-[clamp(44px,6vw,76px)] font-extrabold leading-[0.95] tracking-[-0.045em]">One Report. Every Agency.</h1>
@@ -219,67 +203,46 @@ export default function Landing() {
 
         {/* WHO */}
         <section id="who" className="flex flex-col gap-6 pt-16">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-muted">Who it&apos;s for</span>
-              <h2 className="font-display text-[clamp(28px,3vw,40px)] font-extrabold leading-tight tracking-[-0.035em]">What you get from it</h2>
-            </div>
-            <p className="max-w-[420px] text-sm text-[#4A4E57]">
-              Hacked on either rail, mobile money or crypto, you are a victim and you report here. Licensed or not.
+          <div className="flex max-w-[700px] flex-col gap-3">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-navy">Participants</span>
+            <h2 className="font-display text-[clamp(28px,3vw,40px)] font-extrabold leading-tight tracking-[-0.035em]">What each participant receives.</h2>
+            <p className="text-[15px] leading-relaxed text-[#4A4E57]">
+              Any provider affected by an incident on the payment or virtual asset rails can report, whether licensed or not.
             </p>
           </div>
           <div className="grid gap-3 md:grid-cols-2">
             {AUDIENCES.map((a) => {
               const I = a.icon;
-              const primary = "primary" in a && a.primary;
               return (
-                <div key={a.who} className={`flex flex-col gap-4 rounded-[22px] p-6 ${primary ? "kente text-white" : "bg-white"}`}>
+                <div key={a.who} className="flex flex-col gap-4 rounded-[22px] bg-white p-6">
                   <div className="flex items-start gap-3">
-                    <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${primary ? "bg-white text-navy" : "bg-navy text-white"}`}>
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-navy text-white">
                       <I size={18} />
                     </span>
                     <div className="flex flex-col">
                       <span className="text-lg font-semibold tracking-tight">{a.who}</span>
-                      <span className={`text-[13px] ${primary ? "text-white/70" : "text-muted"}`}>{a.detail}</span>
+                      <span className="text-[13px] text-muted">{a.detail}</span>
                     </div>
                   </div>
                   <ul className="flex flex-col gap-2">
                     {a.gets.map((g) => (
-                      <li key={g} className="flex gap-2.5 text-sm leading-snug">
-                        <Check size={16} className={`mt-0.5 shrink-0 ${primary ? "text-gold" : "text-navy"}`} />
-                        <span className={primary ? "text-white/90" : "text-[#30343C]"}>{g}</span>
+                      <li key={g} className="flex gap-2.5 text-sm leading-snug text-[#30343C]">
+                        <Check size={16} className="mt-0.5 shrink-0 text-navy" />
+                        {g}
                       </li>
                     ))}
                   </ul>
                   <div className="mt-auto flex flex-wrap items-center gap-2 pt-1">
-                    <Link
-                      href={a.href}
-                      className={`inline-flex h-11 items-center gap-2 rounded-full px-5 text-sm font-semibold ${primary ? "bg-white text-ink" : "bg-ink text-white"}`}
-                    >
+                    <Link href={a.href} className="inline-flex h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm font-semibold text-white">
                       {a.cta} <ArrowRight size={15} />
                     </Link>
-                    <Link
-                      href={`/journeys/${a.journey}`}
-                      className={`inline-flex h-11 items-center gap-1.5 rounded-full px-4 text-sm ${primary ? "text-white/80 hover:text-white" : "text-[#4A4E57] hover:text-ink"}`}
-                    >
-                      <UserRound size={15} /> Walk through it
+                    <Link href={`/journeys/${a.journey}`} className="inline-flex h-11 items-center gap-1.5 rounded-full px-4 text-sm text-[#4A4E57] hover:text-ink">
+                      <UserRound size={15} /> View walkthrough
                     </Link>
                   </div>
                 </div>
               );
             })}
-          </div>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-[18px] bg-white px-5 py-4 text-sm">
-            <span className="font-semibold">Also here:</span>
-            <Link href="/insider" className="inline-flex items-center gap-1.5 hover:underline">
-              <EyeOff size={15} /> Report an insider confidentially
-            </Link>
-            <a href="tel:292" className="inline-flex items-center gap-1.5 hover:underline">
-              <Phone size={15} /> Systems down? Call 292 and file from a clean device
-            </a>
-            <Link href="/alerts" className="inline-flex items-center gap-1.5 hover:underline">
-              <Bell size={15} /> Current fraud alerts
-            </Link>
           </div>
         </section>
 
@@ -288,17 +251,19 @@ export default function Landing() {
 
         {/* SAFEGUARDS */}
         <section id="trust" className="flex flex-col gap-6 pt-16">
-          <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium text-muted">Safeguards</span>
-            <h2 className="font-display text-[clamp(28px,3vw,40px)] font-extrabold leading-tight tracking-[-0.035em]">Built to be trusted</h2>
-            <p className="text-sm text-[#4A4E57]">Hosted by the state, built on Acts 1154, 1038, 987 and 1044. CDABI holds no data.</p>
+          <div className="flex max-w-[700px] flex-col gap-3">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-navy">Governance and safeguards</span>
+            <h2 className="font-display text-[clamp(28px,3vw,40px)] font-extrabold leading-tight tracking-[-0.035em]">Designed for accountability.</h2>
+            <p className="text-[15px] leading-relaxed text-[#4A4E57]">
+              Proposed for state hosting under Acts 1154, 1038, 987 and 1044. CDABI would hold no incident data.
+            </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {SAFEGUARDS.map((g) => {
               const I = g.icon;
               return (
-                <div key={g.title} className="flex flex-col gap-2 rounded-[20px] border border-[#E2E0DA] p-5">
-                  <I size={20} />
+                <div key={g.title} className="flex flex-col gap-2 rounded-[20px] bg-white p-5">
+                  <I size={20} className="text-navy" />
                   <span className="font-semibold">{g.title}</span>
                   <span className="text-sm leading-relaxed text-[#4A4E57]">{g.text}</span>
                 </div>
@@ -310,19 +275,16 @@ export default function Landing() {
 
       {/* CLOSING */}
       <section className="kente mt-16 flex flex-col items-center gap-5 rounded-[28px] px-5 pb-6 pt-12 text-center text-white">
-        <h2 className="font-display text-[clamp(30px,3.6vw,48px)] font-extrabold leading-tight tracking-[-0.04em]">Be ready before the next one.</h2>
-        <p className="max-w-[520px] text-[15px] leading-relaxed text-white/80">
-          Hacked right now? Report it. About to transact? Check first. Want to see the whole thing? Walk through it as any of the six people involved.
+        <h2 className="max-w-[760px] font-display text-[clamp(28px,3.2vw,44px)] font-extrabold leading-tight tracking-[-0.04em]">See how One Report would work for your institution.</h2>
+        <p className="max-w-[560px] text-[15px] leading-relaxed text-white/80">
+          Walk through the platform from the position of each participant, or request a demonstration for your team.
         </p>
         <div className="flex flex-wrap justify-center gap-2">
-          <Link href="/report" className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-ink">
-            <FileText size={16} /> Report an incident
+          <Link href="/journeys" className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-ink">
+            Explore the Platform <ArrowRight size={16} />
           </Link>
-          <Link href="/check" className="inline-flex h-12 items-center gap-2 rounded-full border border-white/40 px-6 text-[15px] hover:bg-white/10">
-            <Search size={16} /> Check a number
-          </Link>
-          <Link href="/journeys" className="inline-flex h-12 items-center gap-2 rounded-full border border-white/40 px-6 text-[15px] hover:bg-white/10">
-            See it as… <ArrowRight size={16} />
+          <Link href="/demo" className="inline-flex h-12 items-center gap-2 rounded-full border border-white/40 px-6 text-[15px] hover:bg-white/10">
+            Request a Demonstration
           </Link>
         </div>
         <div className="mt-8 flex w-full flex-wrap items-center justify-between gap-4 rounded-[20px] bg-white px-5 py-4 text-left text-xs text-muted">
@@ -334,7 +296,13 @@ export default function Landing() {
               partner authorities. Not an official government service.
             </span>
           </span>
-          <GhanaRule />
+          <span className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-ink">
+            <Link href="/report" className="hover:underline">Report an incident</Link>
+            <Link href="/check" className="hover:underline">Check the register</Link>
+            <Link href="/alerts" className="hover:underline">Fraud alerts</Link>
+            <Link href="/insider" className="hover:underline">Confidential insider report</Link>
+            <GhanaRule />
+          </span>
         </div>
       </section>
     </div>

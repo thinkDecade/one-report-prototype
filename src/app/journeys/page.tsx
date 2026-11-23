@@ -17,15 +17,13 @@ export default function Journeys() {
         <AppNav />
         <div className="flex flex-wrap items-end justify-between gap-8 px-2 sm:px-4">
           <div className="flex flex-col gap-3">
-            <span className="text-[15px] text-white/75">See it as… · pick a role and follow one person through the drill</span>
-            <h1 className="font-display text-[clamp(32px,4.3vw,57px)] font-extrabold leading-[0.88] tracking-[-0.06em]">
-              Six people.
-              <br />
-              One incident.
+            <span className="text-[15px] text-white/75">Walkthroughs · one simulated incident, seen by each participant</span>
+            <h1 className="font-display text-[clamp(28px,2.6vw,38px)] font-extrabold leading-[1.05] tracking-[-0.035em]">
+              Role walkthroughs
             </h1>
           </div>
           <p className="max-w-[440px] text-[17px] leading-relaxed text-white/80">
-            Each journey starts where that person&apos;s day starts, from the hack, an SMS or an escalation email, and walks through only their screens.
+            Each walkthrough starts with the event that brings that participant in, such as a monitoring alert, an SMS or an escalation, and shows only the screens they would use.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-2.5 px-0 sm:px-2 md:grid-cols-3 xl:grid-cols-6">

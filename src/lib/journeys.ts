@@ -36,7 +36,7 @@ export interface Journey {
 export const JOURNEYS: Journey[] = [
   {
     id: "reporter",
-    role: "Hacked business",
+    role: "Reporting institution",
     pitch: "Report once, then follow your case",
     icon: "file",
     persona: "EMI-0004-01",
