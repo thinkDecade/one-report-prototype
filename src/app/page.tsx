@@ -150,22 +150,21 @@ export default function Landing() {
               <ArrowRight size={14} className="shrink-0" />
             </Link>
           )}
-          <h1 className="max-w-[820px] font-display text-[clamp(40px,5.2vw,68px)] font-extrabold leading-[0.95] tracking-[-0.045em]">
-            Hacked? Report it once. Every authority that needs it gets it.
-          </h1>
-          <p className="max-w-[640px] text-[17px] leading-relaxed text-white/80">
-            One Report is a proposed national portal for incidents at Ghana&apos;s mobile money, payment and virtual asset businesses. The business files one report. The Cyber Security Authority
-            leads, and the police, FIC, Bank of Ghana, SEC and others each receive their part at the same moment.
-          </p>
+          <div className="flex flex-col gap-5">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">Virtual asset financial crime response platform</span>
+            <h1 className="max-w-[820px] font-display text-[clamp(44px,6vw,76px)] font-extrabold leading-[0.95] tracking-[-0.045em]">One Report. Every Agency.</h1>
+            <p className="max-w-[680px] text-[20px] font-semibold leading-snug">A unified platform for reporting and coordinating responses to virtual asset financial crime.</p>
+            <p className="max-w-[640px] text-[16px] leading-relaxed text-white/80">
+              Project One Report connects financial service providers and public authorities through a shared platform for incident reporting, digital evidence management, cross-rail
+              intelligence and coordinated response.
+            </p>
+          </div>
           <div className="flex flex-wrap gap-2">
-            <Link href="/report" className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-ink">
-              <FileText size={16} /> Report an incident
+            <Link href="/journeys" className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-ink">
+              Explore the Platform <ArrowRight size={16} />
             </Link>
-            <Link href="/check" className="inline-flex h-12 items-center gap-2 rounded-full border border-white/40 px-6 text-[15px] hover:bg-white/10">
-              <Search size={16} /> Check a number
-            </Link>
-            <Link href="/journeys" className="inline-flex h-12 items-center gap-2 rounded-full border border-white/40 px-6 text-[15px] hover:bg-white/10">
-              See how it works <ArrowRight size={16} />
+            <Link href="/demo" className="inline-flex h-12 items-center gap-2 rounded-full border border-white/40 px-6 text-[15px] hover:bg-white/10">
+              Request a Demonstration
             </Link>
           </div>
         </div>
