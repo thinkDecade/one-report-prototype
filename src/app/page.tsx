@@ -21,6 +21,7 @@ import {
 import { GhanaRule, Logo, useHydrated } from "@/components/ui";
 import { usePortal } from "@/lib/store";
 import Capabilities from "@/components/Capabilities";
+import HowItWorks from "@/components/HowItWorks";
 
 const WHAT = [
   { icon: FileText, title: "One reporting channel", text: "A single structured report, rather than separate submissions through multiple disconnected channels." },
@@ -88,12 +89,6 @@ const AUDIENCES = [
   },
 ] as const;
 
-const STEPS = [
-  { t: "04:31", h: "Report", d: "KentePay files one report about a ₵1.84m SIM swap theft. Three evidence files are sealed." },
-  { t: "04:31", h: "Route", d: "Ten authorities get their part at once. CSA has one hour to acknowledge, the rest two." },
-  { t: "05:22", h: "Warn", d: "The thieves' wallet is confirmed on the register and an urgent alert goes to agents and OTC desks." },
-  { t: "08:31", h: "Freeze", d: "Freeze requests go out within four hours, through the FIC, EOCO and the courts." },
-];
 
 const SAFEGUARDS = [
   { icon: Fingerprint, title: "Sealed evidence", text: "Every file is fingerprinted and time-stamped on arrival." },
@@ -289,29 +284,7 @@ export default function Landing() {
         </section>
 
         {/* HOW */}
-        <section id="how" className="flex flex-col gap-6 pt-16">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div className="flex flex-col gap-2">
-              <span className="text-sm font-medium text-muted">How it works</span>
-              <h2 className="font-display text-[clamp(28px,3vw,40px)] font-extrabold leading-tight tracking-[-0.035em]">Four hours, from hack to freeze request</h2>
-            </div>
-            <Link href="/journeys" className="inline-flex h-11 items-center gap-2 rounded-full border border-ink px-5 text-sm font-medium hover:bg-white">
-              Follow the drill by role <ArrowRight size={15} />
-            </Link>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map((s, i) => (
-              <div key={s.h} className="flex flex-col gap-2 rounded-[20px] bg-white p-5">
-                <div className="flex items-center justify-between">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-paper font-mono text-xs">{i + 1}</span>
-                  <span className="font-mono text-xs text-muted">{s.t}</span>
-                </div>
-                <span className="text-lg font-semibold tracking-tight">{s.h}</span>
-                <span className="text-sm leading-relaxed text-[#4A4E57]">{s.d}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+        <HowItWorks />
 
         {/* SAFEGUARDS */}
         <section id="trust" className="flex flex-col gap-6 pt-16">
