@@ -76,7 +76,7 @@ export default function CheckPage() {
     <MobileShell>
       <section className="kente kente-sm flex flex-col gap-5 rounded-[28px] px-4 pb-4 pt-4 text-white">
         <div className="flex items-center justify-between">
-          <Link href="/"><Seal size={40} /></Link>
+          <Link href="/" className="lg:hidden"><Seal size={40} /></Link>
           <span className="glass inline-flex h-8 items-center rounded-full px-3.5 text-xs">
             {Math.max(0, DAILY - today)} of {DAILY} checks left today
           </span>

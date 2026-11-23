@@ -17,7 +17,7 @@ export default function AlertsPage() {
     <MobileShell>
       <section className="ripple flex flex-col gap-5 rounded-[28px] px-4 pb-5 pt-4 text-white">
         <div className="flex items-center justify-between">
-          <Link href="/"><Seal size={40} /></Link>
+          <Link href="/" className="lg:hidden"><Seal size={40} /></Link>
           <span className="glass inline-flex h-8 items-center gap-2 rounded-full px-3.5 text-xs">
             <Bell size={13} /> In the app only
           </span>
