@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { GhanaRule, Logo, useHydrated } from "@/components/ui";
 import { usePortal } from "@/lib/store";
+import Capabilities from "@/components/Capabilities";
 
 const WHAT = [
   { icon: FileText, title: "One reporting channel", text: "A single structured report, rather than separate submissions through multiple disconnected channels." },
@@ -120,6 +121,9 @@ export default function Landing() {
             <a href="#what" className="hidden h-10 items-center rounded-full px-4 text-sm hover:bg-white/10 lg:inline-flex">
               What it is
             </a>
+            <a href="#platform" className="hidden h-10 items-center rounded-full px-4 text-sm hover:bg-white/10 lg:inline-flex">
+              Platform
+            </a>
             <a href="#who" className="hidden h-10 items-center rounded-full px-4 text-sm hover:bg-white/10 lg:inline-flex">
               Who it&apos;s for
             </a>
@@ -215,6 +219,8 @@ export default function Landing() {
             </div>
           </div>
         </section>
+
+        <Capabilities />
 
         {/* WHO */}
         <section id="who" className="flex flex-col gap-6 pt-16">
