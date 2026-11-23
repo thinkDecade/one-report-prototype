@@ -22,7 +22,7 @@ export default function AlertsPage() {
             <Bell size={13} /> In the app only
           </span>
         </div>
-        <span className="pl-1 font-display text-[48px] font-extrabold leading-[0.85] tracking-[-0.06em]">Alerts</span>
+        <span className="pl-1 font-display text-[32px] font-extrabold leading-[1.05] tracking-[-0.035em]">Fraud alerts</span>
         <span className="pl-1 text-[13px] text-white/75">Real alerts never ask for a code or a payment.</span>
       </section>
       {alerts.map((a) => {

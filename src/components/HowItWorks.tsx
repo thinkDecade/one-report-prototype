@@ -52,7 +52,7 @@ export default function HowItWorks() {
           </p>
         </div>
         <Link href="/journeys" className="inline-flex h-11 items-center gap-2 rounded-full border border-ink px-5 text-sm font-medium hover:bg-white">
-          Follow it by role <ArrowRight size={15} />
+          View walkthroughs <ArrowRight size={15} />
         </Link>
       </div>
 
@@ -114,7 +114,7 @@ export default function HowItWorks() {
       </div>
 
       {/* important distinction */}
-      <div className="flex flex-col gap-3 rounded-[24px] border border-[#E2E0DA] p-6 sm:p-7">
+      <div className="flex flex-col gap-3 rounded-[24px] bg-white p-6 sm:p-7">
         <span className="flex items-center gap-2 text-sm font-semibold">
           <Info size={16} /> Important distinction
         </span>

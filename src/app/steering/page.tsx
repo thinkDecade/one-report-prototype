@@ -32,10 +32,8 @@ export default function Steering() {
       <section className="kente flex flex-col gap-6 rounded-[24px] px-4 pb-8 pt-5 text-white sm:px-6">
         <AppNav />
         <div className="flex flex-wrap items-end justify-between gap-6 px-2">
-          <h1 className="font-display text-[clamp(35px,4.3vw,55px)] font-extrabold leading-[0.88] tracking-[-0.06em]">
-            Is it moving
-            <br />
-            fast enough?
+          <h1 className="font-display text-[clamp(28px,2.6vw,38px)] font-extrabold leading-[1.05] tracking-[-0.035em]">
+            Oversight dashboard
           </h1>
           <span className="glass inline-flex h-10 items-center gap-2 rounded-full px-4 text-[13px]">
             <Shield size={16} /> For heads of authorities. Counts and times only, no personal data.

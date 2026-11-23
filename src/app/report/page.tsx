@@ -133,12 +133,8 @@ function ReportWizard() {
           </span>
         </div>
         <div className="flex flex-col gap-2.5">
-          <span className="text-[15px] text-white/75">New incident report · for VASPs, mobile money issuers, payment providers and agents</span>
-          <span className="font-display text-[47px] font-extrabold leading-[0.88] tracking-[-0.055em]">
-            Tell it
-            <br />
-            once.
-          </span>
+          <span className="text-[15px] text-white/75">For VASPs, electronic money issuers, payment service providers and agents</span>
+          <span className="font-display text-[32px] font-extrabold leading-[1.05] tracking-[-0.035em]">New incident report</span>
         </div>
         <ol className="flex flex-col gap-1.5">
           {STEPS.map((s, i) => {
@@ -246,7 +242,7 @@ type StepProps = { draft: ReportDraft; patch: (p: Partial<ReportDraft>) => void 
 function H({ title, sub }: { title: React.ReactNode; sub: string }) {
   return (
     <div className="flex flex-col gap-3.5">
-      <h1 className="font-display text-[clamp(32px,3.7vw,52px)] font-extrabold leading-[0.9] tracking-[-0.06em]">{title}</h1>
+      <h1 className="font-display text-[clamp(28px,2.6vw,38px)] font-extrabold leading-[1.05] tracking-[-0.035em]">{title}</h1>
       <span className="max-w-[620px] text-[17px] text-muted">{sub}</span>
     </div>
   );
@@ -258,7 +254,7 @@ const label = "flex flex-col gap-2 text-sm font-medium";
 function StepHappened({ draft, patch }: StepProps) {
   return (
     <>
-      <H title={<>What happened?</>} sub="Hacked on either rail, you are a victim and you report here. Give it a short name and say what you know and what you suspect. You can add more later." />
+      <H title={<>What happened?</>} sub="Give the incident a short name and describe what you know and what you suspect. You can add or correct details later." />
       <label className={label}>
         Short name for this incident
         <input className={field} value={draft.title} onChange={(e) => patch({ title: e.target.value })} placeholder="For example: SIM swap on agent float" />
@@ -531,7 +527,7 @@ function Sent({ id, routes, severity, onBoard }: { id: string; routes: ReturnTyp
         <span className="glass inline-flex h-9 items-center gap-2 self-start rounded-full px-4 font-mono text-sm">
           <Check size={15} /> {id}
         </span>
-        <h1 className="font-display text-[clamp(36px,4.6vw,64px)] font-extrabold leading-[0.85] tracking-[-0.065em]">Sent.</h1>
+        <h1 className="font-display text-[clamp(28px,2.6vw,38px)] font-extrabold leading-[1.05] tracking-[-0.035em]">Report submitted</h1>
         <p className="max-w-[640px] text-lg text-white/80">
           {routes.length} authorities received your report at <span className="font-mono">{hhmm(now)}</span>. The Cyber Security Authority will acknowledge within {severity === 1 ? "one hour" : "one working day"}. You will see every step they take.
         </p>

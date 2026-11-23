@@ -6,7 +6,7 @@ import JourneyBar from "@/components/JourneyBar";
 export const metadata: Metadata = {
   title: "One Report · Ghana incident reporting portal (prototype)",
   description:
-    "Concept prototype by CDABI: one report from a hacked mobile money or virtual asset business reaches every Ghanaian authority at once.",
+    "Concept prototype by CDABI: a unified platform for reporting and coordinating responses to virtual asset financial crime in Ghana.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

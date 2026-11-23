@@ -84,7 +84,7 @@ function Board() {
       <div className="min-h-screen bg-paper p-6">
         <section className="kente rounded-[24px] p-6">
           <AppNav />
-          <h1 className="px-3 pb-6 pt-8 font-display text-5xl font-extrabold tracking-[-0.055em] text-white">No open cases.</h1>
+          <h1 className="px-3 pb-6 pt-8 font-display text-[34px] font-extrabold tracking-[-0.035em] text-white">No open cases.</h1>
         </section>
       </div>
     );
@@ -123,7 +123,7 @@ function Board() {
                 </button>
               ))}
             </div>
-            <h1 className="max-w-[820px] font-display text-[clamp(32px,3.7vw,50px)] font-extrabold leading-[0.9] tracking-[-0.055em]">{c.title}</h1>
+            <h1 className="max-w-[820px] font-display text-[clamp(28px,2.6vw,38px)] font-extrabold leading-[1.05] tracking-[-0.035em]">{c.title}</h1>
             <div className="flex flex-wrap items-center gap-2 text-[15px] text-white/80">
               <span className="glass inline-flex h-8 items-center gap-2 rounded-full px-3.5 text-xs">
                 <span className={clsx("h-2 w-2 rounded-full", c.severity === 1 ? "bg-overdue" : "bg-acked")} />
@@ -213,7 +213,6 @@ function TaskCard({ t, now, selected, onClick }: { t: Task; now: number; selecte
   const officer = officerFor(t.authority);
   const over = overdueMinutes(t, now);
   const esc = escalationLevel(t, now);
-  const last = [...t.events].reverse().find((e) => e.button === "record");
   const due = t.createdAt + t.ackTarget * M;
   const stamp = t.acknowledgedAt ?? t.createdAt;
   return (
@@ -236,14 +235,14 @@ function TaskCard({ t, now, selected, onClick }: { t: Task; now: number; selecte
         </span>
       )}
       <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1.5 text-xs text-zinc-500">
+        <span className="flex items-center gap-1.5 whitespace-nowrap text-xs text-zinc-500">
           <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-zinc-200 bg-zinc-100 text-[9px] font-semibold text-zinc-900">{initials(officer?.name ?? t.authority)}</span>
           {officer?.userId ?? t.authority}
         </span>
-        <span className={clsx("flex items-center gap-1 text-xs", t.state === "acted" ? "text-green-700" : "text-zinc-500")}>
+        <span className={clsx("flex items-center gap-1 whitespace-nowrap text-xs", t.state === "acted" ? "text-green-700" : "text-zinc-500")}>
           {t.state === "acted" ? (
             <>
-              <Check size={13} /> {last?.code ? truncate(last.code, 22) : "Done"}
+              <Check size={13} /> Action recorded
             </>
           ) : t.state === "acknowledged" ? (
             <>
@@ -260,9 +259,6 @@ function TaskCard({ t, now, selected, onClick }: { t: Task; now: number; selecte
   );
 }
 
-function truncate(s: string, n: number) {
-  return s.length > n ? s.slice(0, n - 1) + "…" : s;
-}
 
 function TaskPanel({ task, c }: { task: Task; c: CaseRecord }) {
   const { personaId, taskAction, setPersona, now } = usePortal();

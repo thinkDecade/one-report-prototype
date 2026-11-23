@@ -39,9 +39,9 @@ export default function Trigger() {
       <section className="kente flex flex-1 flex-col items-center justify-center gap-6 rounded-[24px] px-5 py-14 text-white">
         <div className="flex flex-col items-center gap-3 text-center">
           <span className="text-[15px] text-white/70">{j.who}</span>
-          <h1 className="font-display text-[clamp(30px,3.7vw,50px)] font-extrabold leading-[0.9] tracking-[-0.06em]">
-            {j.trigger.time}.{" "}
-            <span className="text-white/60">{j.trigger.channel === "chat" ? "A message comes in." : j.trigger.channel === "alarm" ? "An alarm goes off." : "This arrives."}</span>
+          <h1 className="font-display text-[clamp(28px,2.6vw,38px)] font-extrabold leading-[1.05] tracking-[-0.035em]">
+            {j.trigger.time}{" "}
+            <span className="text-white/60">· {j.trigger.channel === "chat" ? "Message received" : j.trigger.channel === "alarm" ? "Monitoring alert received" : "Notification received"}</span>
           </h1>
         </div>
 

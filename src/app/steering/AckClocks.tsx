@@ -77,7 +77,7 @@ export default function AckClocks() {
       <div className="flex flex-wrap items-start justify-between gap-8">
         <div className="flex max-w-[640px] flex-col gap-2.5">
           <span className="text-sm text-muted">Time to acknowledge · live at {hhmm(now)}</span>
-          <span className="font-display text-[clamp(30px,3.1vw,40px)] font-extrabold leading-[0.92] tracking-[-0.055em]">
+          <span className="font-display text-[clamp(28px,2.6vw,38px)] font-extrabold leading-[1.05] tracking-[-0.035em]">
             {onTime} of {rows.length} on time.
           </span>
           <span className="text-[17px] text-[#4A4E57]">

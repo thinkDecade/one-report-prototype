@@ -81,7 +81,7 @@ export default function CheckPage() {
             {Math.max(0, DAILY - today)} of {DAILY} checks left today
           </span>
         </div>
-        <span className="pl-1 font-display text-[48px] font-extrabold leading-[0.85] tracking-[-0.06em]">Check</span>
+        <span className="pl-1 font-display text-[32px] font-extrabold leading-[1.05] tracking-[-0.035em]">Check the register</span>
         <span className="-mt-2 pl-1 text-[13px] text-white/75">
           For agents, OTC vendors, issuers, VASPs and banks · signed in as {persona?.name}
         </span>
@@ -161,7 +161,7 @@ export default function CheckPage() {
           <span className="flex h-10 w-10 items-center justify-center rounded-full bg-paper">
             <ShieldCheck size={18} />
           </span>
-          <strong className="text-2xl font-bold leading-tight tracking-tight">Three possible answers. Never “clean”.</strong>
+          <strong className="text-xl font-semibold leading-tight tracking-tight">How the register responds</strong>
           <span className="text-sm leading-relaxed text-muted">
             The register only says whether a number or wallet has been reported. It never names anyone, and nobody can download a list. Every check gives you a receipt that shows you acted in good faith.
           </span>

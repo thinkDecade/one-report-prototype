@@ -10,11 +10,11 @@ import { personaById } from "@/lib/seed";
 import { initials } from "@/lib/format";
 
 const LINKS = [
-  { href: "/journeys", label: "See it as…" },
-  { href: "/report", label: "File a report" },
-  { href: "/check", label: "Check a number" },
-  { href: "/board", label: "Authority view" },
-  { href: "/steering", label: "Steering view" },
+  { href: "/journeys", label: "Walkthroughs" },
+  { href: "/report", label: "Report incident" },
+  { href: "/check", label: "Check register" },
+  { href: "/board", label: "Case board" },
+  { href: "/steering", label: "Oversight" },
 ];
 
 export default function AppNav() {
