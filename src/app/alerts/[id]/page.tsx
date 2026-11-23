@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArrowLeft, ArrowRight, Lock, Receipt, ShieldCheck, Smartphone, TriangleExclamationPoint, Wallet, Landmark } from "lucide-react";
@@ -16,6 +16,7 @@ export default function AlertDetail() {
   const { id } = useParams<{ id: string }>();
   const { alerts, entries, checks, personaId, markAlertRead } = usePortal();
   const a = alerts.find((x) => x.id === id);
+  const [ack, setAck] = useState(false);
   useEffect(() => {
     if (a) markAlertRead(a.id);
   }, [a, markAlertRead]);
@@ -58,7 +59,34 @@ export default function AlertDetail() {
 
       <span className="px-2 pt-1.5 text-[15px] font-medium">{a.text}</span>
 
-      {list.length > 0 && (
+      {a.cancelledEntryIds.length > 0 && (
+        <section className="flex items-start gap-3 rounded-[22px] bg-white p-4 text-[13px] leading-snug">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-paper">
+            <ShieldCheck size={16} />
+          </span>
+          <span>
+            <b>Cancellation.</b> {a.cancelledEntryIds.length} {a.cancelledEntryIds.length === 1 ? "entry was" : "entries were"} removed from the register after this alert. They are no longer shown.
+          </span>
+        </section>
+      )}
+
+      {list.length > 0 && !ack && (
+        <section className="flex flex-col gap-3 rounded-[22px] bg-gold-soft p-4">
+          <span className="flex items-start gap-3 text-[13px] leading-relaxed">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink text-white">
+              <Lock size={15} />
+            </span>
+            <span>
+              <b>Before you see the identifiers.</b> Tipping off is an offence under section 48(1)(f) of Act 1044. You must not tell any customer about this alert, a check answer or an investigation.
+            </span>
+          </span>
+          <button onClick={() => setAck(true)} className="inline-flex h-11 items-center justify-center rounded-full bg-ink text-sm font-medium text-white">
+            I understand. Show the {list.length} identifiers
+          </button>
+        </section>
+      )}
+
+      {list.length > 0 && ack && (
         <div className="flex flex-col gap-1.5">
           {list.map((e) => (
             <div key={e.id} className="flex items-center gap-3 rounded-[20px] bg-white py-2.5 pl-2.5 pr-3">
@@ -87,7 +115,7 @@ export default function AlertDetail() {
       )}
 
       <div className="mt-auto flex flex-col gap-2.5 pt-4">
-        <Link href="/report" className="inline-flex h-14 items-center justify-center gap-2 rounded-full bg-ink text-base font-medium text-white">
+        <Link href="/report?type=C" className="inline-flex h-14 items-center justify-center gap-2 rounded-full bg-ink text-base font-medium text-white">
           Report a match <ArrowRight size={18} />
         </Link>
         <span className="flex items-start gap-2 px-2 text-xs leading-snug text-muted">

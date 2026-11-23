@@ -50,6 +50,48 @@ export default function Steering() {
 
       <AckClocks />
 
+      <section className="flex flex-col gap-5 rounded-[26px] bg-white px-7 py-6">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <span className="text-xl font-semibold">This quarter</span>
+          <span className="text-xs text-muted">Sample figures for demonstration. No evidence or personal data.</span>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {[
+            ["US$ 1.4m", "frozen", "US$ 0.3m returned to clients"],
+            ["7", "open cases", "2 Level 1 · 3 Level 2 · 2 Level 3"],
+            ["4", "escalations", "1 reached a head of authority"],
+            ["3", "inbound requests from abroad", "2 attached to existing cases"],
+          ].map(([v, l, sub]) => (
+            <div key={l} className="flex flex-col gap-1 rounded-[20px] bg-paper px-5 py-4">
+              <span className="flex items-baseline gap-2">
+                <span className="text-[26px] font-bold tracking-[-0.04em]">{v}</span>
+                <span className="text-sm">{l}</span>
+              </span>
+              <span className="text-[13px] text-muted">{sub}</span>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col">
+          <div className="flex justify-between pb-2 text-xs font-medium text-muted">
+            <span>Measure</span>
+            <span>Value</span>
+          </div>
+          {[
+            ["Level 1 cases with a first freeze request within 4 hours", "5 of 6"],
+            ["Check register entries confirmed within 24 hours", "14 of 16"],
+            ["Lead investigator confirmed within 2 hours", "6 of 6"],
+            ["Police complaint reports signed within 24 hours", "4 of 6"],
+            ["Unusual access alerts reviewed", "2 (1 explained, 1 referred to the officer's authority)"],
+            ["Statements cleared for release", "11 (2 held as \"not now\")"],
+          ].map(([k, v]) => (
+            <div key={k} className="flex items-center justify-between gap-6 border-t border-[#ECEBE7] py-3 text-sm">
+              <span>{k}</span>
+              <span className="text-right font-mono text-[13px]">{v}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <div className="grid flex-1 gap-3">
         <section className="flex flex-col rounded-[26px] bg-white px-7 py-6">
           <div className="flex items-center justify-between pb-3.5">

@@ -18,17 +18,21 @@ import {
   X,
   Hash,
   Sparkles,
+  ShieldCheck,
+  MonitorSmartphone,
+  TriangleExclamationPoint,
 } from "lucide-react";
+import type { Institution } from "@/lib/types";
 import { usePortal } from "@/lib/store";
 import { drillDraft, institutionById, personaById } from "@/lib/seed";
 import type { ReportDraft } from "@/lib/cases";
 import { routeCase, AUTHORITIES } from "@/lib/routing";
 import { hashFile, normaliseIdentifier } from "@/lib/hash";
 import type { Exhibit, Identifier, ReportType, Severity } from "@/lib/types";
-import { cedi, duration, hhmm, shortId, formatIdentifier } from "@/lib/format";
+import { cedi, dayTime, duration, hhmm, shortId, formatIdentifier } from "@/lib/format";
 import { Loading, Seal, useHydrated } from "@/components/ui";
 
-const STEPS = ["What happened", "What moved", "Where it went", "Evidence", "Review and send"];
+const STEPS = ["Your registration", "What happened", "What moved", "Where it went", "Evidence", "Review and send"];
 
 const TYPES: { k: ReportType; t: string; d: string }[] = [
   { k: "A", t: "Theft of funds", d: "Money or crypto taken from the business, its agents or its float" },
@@ -89,10 +93,16 @@ function ReportWizard() {
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<ReportDraft>(() => emptyDraft(filer.institution, filer.userId));
   const [sentId, setSentId] = useState<string | null>(null);
+  const [declared, setDeclared] = useState(false);
   const [savedAt, setSavedAt] = useState<number | null>(null);
 
   useEffect(() => {
     if (params.get("drill") === "1") loadDrill();
+    const t = params.get("type");
+    if (t && ["A", "B", "C", "D", "E"].includes(t)) {
+      setDraft((d) => ({ ...d, type: t as ReportType }));
+      setStep(1);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -115,13 +125,13 @@ function ReportWizard() {
 
   if (!hydrated) return <Loading />;
 
-  if (sentId) return <Sent id={sentId} routes={routes} severity={draft.severity} onBoard={() => { setPersona("CSA-0142"); router.push("/board?case=" + sentId); }} />;
+  if (sentId) return <Sent id={sentId} routes={routes} severity={draft.severity} detectedAt={draft.detectedAt || now} onBoard={() => { setPersona("CSA-0142"); router.push("/board?case=" + sentId); }} />;
 
   const canNext =
-    step === 0 ? draft.title.trim().length > 3 :
-    step === 1 ? true :
-    step === 2 ? draft.identifiers.length > 0 || draft.type === "D" :
+    step === 1 ? draft.title.trim().length > 3 :
+    step === 3 ? draft.identifiers.length > 0 || draft.type === "D" :
     true;
+  const last = STEPS.length - 1;
 
   return (
     <div className="grid min-h-screen gap-4 bg-paper p-3 sm:p-6 lg:grid-cols-[420px_minmax(0,1fr)]">
@@ -195,16 +205,17 @@ function ReportWizard() {
           </Link>
         </div>
 
-        {step === 0 && <StepHappened draft={draft} patch={patch} />}
-        {step === 1 && <StepMoved draft={draft} patch={patch} />}
-        {step === 2 && <StepWhere draft={draft} patch={patch} />}
-        {step === 3 && <StepEvidence draft={draft} patch={patch} now={now} />}
-        {step === 4 && <StepReview draft={draft} routes={routes} instName={inst.name} />}
+        {step === 0 && <StepRegistration inst={inst} filerName={filer.name} />}
+        {step === 1 && <StepHappened draft={draft} patch={patch} now={now} />}
+        {step === 2 && <StepMoved draft={draft} patch={patch} />}
+        {step === 3 && <StepWhere draft={draft} patch={patch} />}
+        {step === 4 && <StepEvidence draft={draft} patch={patch} now={now} />}
+        {step === 5 && <StepReview draft={draft} patch={patch} routes={routes} instName={inst.name} filerName={filer.name} filerId={filer.userId} declared={declared} setDeclared={setDeclared} />}
 
         <div className="mt-auto flex flex-wrap items-center justify-between gap-6 border-t border-[#ECEBE7] pt-5">
           <span className="flex max-w-[520px] items-center gap-2.5 text-sm text-[#4A4E57]">
             <Globe size={18} className="shrink-0" />
-            {step === 4
+            {step === last
               ? `${routes.length} authorities will receive this at the same moment.`
               : "If funds left Ghana, the Attorney-General's Department is added automatically."}
           </span>
@@ -214,7 +225,7 @@ function ReportWizard() {
                 Back
               </button>
             )}
-            {step < 4 ? (
+            {step < last ? (
               <button
                 disabled={!canNext}
                 onClick={() => setStep(step + 1)}
@@ -224,8 +235,9 @@ function ReportWizard() {
               </button>
             ) : (
               <button
+                disabled={!declared}
                 onClick={() => setSentId(submitReport(draft))}
-                className="inline-flex h-[58px] items-center gap-2 rounded-full bg-ink px-8 text-base font-medium text-white"
+                className="inline-flex h-[58px] items-center gap-2 rounded-full bg-ink px-8 text-base font-medium text-white disabled:opacity-40"
               >
                 Send to all {routes.length} authorities <ArrowRight size={18} />
               </button>
@@ -251,10 +263,92 @@ function H({ title, sub }: { title: React.ReactNode; sub: string }) {
 const field = "h-14 w-full rounded-2xl border border-[#D6D5D1] bg-white px-5 text-base outline-none focus:border-ink";
 const label = "flex flex-col gap-2 text-sm font-medium";
 
-function StepHappened({ draft, patch }: StepProps) {
+const KIND_LABEL: Record<string, string> = {
+  VASP: "Virtual asset service provider (VASP)",
+  EMI: "Electronic money issuer (including mobile money)",
+  PSP: "Payment service provider",
+  AGENT: "Mobile money agent",
+  OTC: "OTC vendor",
+  BANK: "Bank",
+};
+
+function StepRegistration({ inst, filerName }: { inst: Institution; filerName: string }) {
+  const licensed = inst.kind === "EMI" || inst.kind === "PSP";
+  const rows: [string, string][] = [
+    ["Kind of provider", KIND_LABEL[inst.kind] ?? inst.kind],
+    ["Registered company name", inst.name],
+    ["Company registration number", inst.regNo],
+    ["Certificate of incorporation", "Scan on file"],
+    ["Form 3", "Scan on file"],
+    ["Chief executive officer's Ghana Card", "GHA-7XXXXXXXX-X · copy on file, both sides"],
+    [licensed ? "Bank of Ghana licence" : "Licensing or sandbox status", inst.licence],
+    ["Regulator expected to supervise", inst.kind === "VASP" ? "SEC Ghana and Bank of Ghana" : "Bank of Ghana"],
+    ["Incident lead", filerName],
+    ["24-hour contact", inst.contact24h],
+  ];
+  return (
+    <>
+      <H title={<>Your registration</>} sub="Providers register once, before any incident. These items must be in place before you can file. Sample values are shown." />
+      <div className="grid gap-3 xl:grid-cols-[1.3fr_1fr]">
+        <div className="flex flex-col rounded-[24px] bg-[#F4F3F0] p-5 text-[15px]">
+          {rows.map(([k, v]) => (
+            <div key={k} className="flex items-center justify-between gap-4 border-b border-[#E4E3DF] py-2.5 last:border-0">
+              <span className="text-muted">{k}</span>
+              <span className="flex items-center gap-2 text-right font-medium">
+                {v}
+                <Check size={15} className="shrink-0 text-acted" />
+              </span>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2 rounded-[22px] border border-[#E4E3DF] p-5 text-sm leading-relaxed">
+            <span className="font-semibold">Checks before you can file</span>
+            {[
+              "The chief executive declared the uploaded documents are genuine copies. A false document is an offence and removes the provider from the register.",
+              "A registration officer reviewed the scans and confirmed the company name and number match. There is no online company validation today, so scans are accepted.",
+            ].map((t) => (
+              <span key={t} className="flex gap-2.5 text-[#4A4E57]">
+                <Check size={16} className="mt-0.5 shrink-0" /> {t}
+              </span>
+            ))}
+          </div>
+          <div className="flex flex-col gap-2 rounded-[22px] border border-[#E4E3DF] p-5 text-sm leading-relaxed text-[#4A4E57]">
+            <span className="font-semibold text-ink">Filing for a mobile money agent</span>
+            Agents register with their Ghana Card, agent code or till number and their principal electronic money issuer. The principal confirms the agent on the portal and may also file for them. Both reports join one case.
+          </div>
+          <div className="flex items-start gap-3 rounded-[22px] bg-paper p-5 text-sm leading-relaxed">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink text-white">
+              <ShieldCheck size={16} />
+            </span>
+            <span>
+              <b>Registration is not a licence.</b> Registering or filing does not license your business or imply approval by any authority. Your documents and the CEO&apos;s ID are seen only by registration officers and regulators.
+            </span>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function toLocal(t: number) {
+  return new Date(t).toISOString().slice(0, 16);
+}
+
+function StepHappened({ draft, patch, now }: StepProps & { now: number }) {
+  const detected = draft.detectedAt || now;
   return (
     <>
       <H title={<>What happened?</>} sub="Give the incident a short name and describe what you know and what you suspect. You can add or correct details later." />
+      <div className="flex items-start gap-3 rounded-[22px] bg-paper p-4 text-sm leading-relaxed">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink text-white">
+          <MonitorSmartphone size={16} />
+        </span>
+        <span>
+          File from a device and account outside the affected systems. If someone at your company may be involved, use the{" "}
+          <Link href="/insider" className="font-medium underline underline-offset-2">confidential insider route</Link> instead.
+        </span>
+      </div>
       <label className={label}>
         Short name for this incident
         <input className={field} value={draft.title} onChange={(e) => patch({ title: e.target.value })} placeholder="For example: SIM swap on agent float" />
@@ -286,15 +380,24 @@ function StepHappened({ draft, patch }: StepProps) {
           ))}
         </div>
       </div>
-      <label className={label}>
-        How you found out
-        <input className={field} value={draft.detectedHow} onChange={(e) => patch({ detectedHow: e.target.value })} placeholder="Alert, complaint, reconciliation…" />
-      </label>
-      <div className="flex flex-wrap gap-2">
-        <Toggle on={draft.triggers.telecom} onClick={() => patch({ triggers: { ...draft.triggers, telecom: !draft.triggers.telecom } })} text="SIM swap or telecom element" />
-        <Toggle on={draft.personalData} onClick={() => patch({ personalData: !draft.personalData })} text="Customer personal data exposed" />
-        <Toggle on={draft.triggers.stateBacked} onClick={() => patch({ triggers: { ...draft.triggers, stateBacked: !draft.triggers.stateBacked } })} text="Possible state-backed attacker" />
-        <Toggle on={draft.triggers.corruption} onClick={() => patch({ triggers: { ...draft.triggers, corruption: !draft.triggers.corruption } })} text="A public officer may be involved" />
+      <div className="grid gap-4 sm:grid-cols-[260px_1fr]">
+        <label className={label}>
+          When was it detected? (GMT)
+          <input
+            type="datetime-local"
+            className={clsx(field, "font-mono")}
+            value={toLocal(detected)}
+            onChange={(e) => {
+              const t = Date.parse(e.target.value + ":00Z");
+              if (!Number.isNaN(t)) patch({ detectedAt: t });
+            }}
+          />
+          <span className="font-normal text-muted">Initial notice due by {dayTime(detected + 24 * 3600_000)}</span>
+        </label>
+        <label className={label}>
+          How you found out
+          <input className={field} value={draft.detectedHow} onChange={(e) => patch({ detectedHow: e.target.value })} placeholder="Alert, complaint, reconciliation…" />
+        </label>
       </div>
     </>
   );
@@ -302,36 +405,91 @@ function StepHappened({ draft, patch }: StepProps) {
 
 function Toggle({ on, onClick, text }: { on: boolean; onClick: () => void; text: string }) {
   return (
-    <button onClick={onClick} className={clsx("inline-flex h-11 items-center gap-2 rounded-full px-4 text-sm", on ? "bg-ink text-white" : "border border-[#D6D5D1] hover:border-ink")}>
-      <span className={clsx("flex h-5 w-5 items-center justify-center rounded-full", on ? "bg-gold text-ink" : "border border-[#B9B8B3]")}>{on && <Check size={12} strokeWidth={3} />}</span>
+    <button onClick={onClick} className={clsx("inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-left text-sm", on ? "bg-ink text-white" : "border border-[#D6D5D1] hover:border-ink")}>
+      <span className={clsx("flex h-5 w-5 shrink-0 items-center justify-center rounded-full", on ? "bg-gold text-ink" : "border border-[#B9B8B3]")}>{on && <Check size={12} strokeWidth={3} />}</span>
       {text}
     </button>
   );
 }
 
+const CONTAINMENT = ["Withdrawals or transfers paused", "Keys or credentials rotated", "Remaining funds moved to clean storage", "Systems or accounts isolated"];
+const SOLVENCY: { k: "covered" | "unknown" | "shortfall"; t: string }[] = [
+  { k: "covered", t: "Yes, client assets fully covered" },
+  { k: "unknown", t: "Not yet known" },
+  { k: "shortfall", t: "No, there is a shortfall" },
+];
+
+const area = "min-h-[110px] w-full rounded-2xl border border-[#D6D5D1] p-5 text-base font-normal outline-none focus:border-ink";
+const num = (v: string) => Number(v.replace(/\D/g, "")) || 0;
+
 function StepMoved({ draft, patch }: StepProps) {
+  const cust = draft.customerLossCedi ?? 0;
+  const comp = draft.companyLossCedi ?? (cust ? 0 : draft.lossCedi);
+  const setLoss = (c: number, k: number) => patch({ customerLossCedi: c, companyLossCedi: k, lossCedi: c + k });
+  const checks = draft.containmentChecks ?? [];
   return (
     <>
-      <H title={<>What moved?</>} sub="Rough numbers are fine. Authorities need the size of the loss and whether money crossed from mobile money into crypto." />
-      <div className="grid gap-4 sm:grid-cols-2">
+      <H title={<>What moved?</>} sub="Rough numbers are fine. Authorities need the size of the loss, whether clients are covered, and whether money crossed from mobile money into crypto." />
+      <div className="grid gap-4 sm:grid-cols-3">
         <label className={label}>
-          Total loss, in cedis
-          <input className={clsx(field, "font-mono")} inputMode="numeric" value={draft.lossCedi ? draft.lossCedi.toLocaleString("en-GB") : ""} onChange={(e) => patch({ lossCedi: Number(e.target.value.replace(/\D/g, "")) || 0 })} placeholder="0" />
+          Customer funds lost, in cedis
+          <input className={clsx(field, "font-mono")} inputMode="numeric" value={cust ? cust.toLocaleString("en-GB") : ""} onChange={(e) => setLoss(num(e.target.value), comp)} placeholder="0" />
+        </label>
+        <label className={label}>
+          Company funds or float lost
+          <input className={clsx(field, "font-mono")} inputMode="numeric" value={comp ? comp.toLocaleString("en-GB") : ""} onChange={(e) => setLoss(cust, num(e.target.value))} placeholder="0" />
         </label>
         <label className={label}>
           Customers affected
-          <input className={clsx(field, "font-mono")} inputMode="numeric" value={draft.customersAffected || ""} onChange={(e) => patch({ customersAffected: Number(e.target.value.replace(/\D/g, "")) || 0 })} placeholder="0" />
+          <input className={clsx(field, "font-mono")} inputMode="numeric" value={draft.customersAffected || ""} onChange={(e) => patch({ customersAffected: num(e.target.value) })} placeholder="0" />
         </label>
       </div>
       <Toggle on={draft.crossRail} onClick={() => patch({ crossRail: !draft.crossRail })} text="Money moved between mobile money or bank and crypto (cross-rail)" />
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-medium">Containment so far</span>
+        <div className="flex flex-wrap gap-2">
+          {CONTAINMENT.map((c) => (
+            <Toggle key={c} on={checks.includes(c)} onClick={() => patch({ containmentChecks: checks.includes(c) ? checks.filter((x) => x !== c) : [...checks, c] })} text={c} />
+          ))}
+        </div>
+      </div>
       <label className={label}>
-        What you have done to contain it, one step per line
-        <textarea
-          className="min-h-[120px] w-full rounded-2xl border border-[#D6D5D1] p-5 text-base outline-none focus:border-ink"
-          value={draft.containment.join("\n")}
-          onChange={(e) => patch({ containment: e.target.value.split("\n") })}
-          placeholder="04:02 Outbound float transfers paused"
-        />
+        Containment steps with times, one per line
+        <textarea className={area} value={draft.containment.join("\n")} onChange={(e) => patch({ containment: e.target.value.split("\n") })} placeholder="04:02 Outbound float transfers paused" />
+      </label>
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-medium">Can you cover every client&apos;s assets in full?</span>
+        <div className="flex flex-wrap gap-1.5">
+          {SOLVENCY.map((o) => (
+            <button key={o.k} onClick={() => patch({ solvencyStatus: o.k })} className={clsx("inline-flex h-12 items-center rounded-full px-5 text-sm", draft.solvencyStatus === o.k ? "bg-ink text-white" : "border border-ink")}>
+              {o.t}
+            </button>
+          ))}
+        </div>
+      </div>
+      {draft.solvencyStatus === "shortfall" && (
+        <div className="flex flex-col gap-4 rounded-[22px] bg-[#FBEDEA] p-5">
+          <span className="flex items-start gap-3 text-sm leading-relaxed">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#B3261E] text-white">
+              <TriangleExclamationPoint size={16} />
+            </span>
+            Your regulator sees this immediately. Do not reopen withdrawals before agreeing a plan with them.
+          </span>
+          <div className="grid gap-4 sm:grid-cols-[220px_1fr]">
+            <label className={label}>
+              Shortfall, in cedis
+              <input className={clsx(field, "font-mono")} inputMode="numeric" value={draft.shortfallCedi ? draft.shortfallCedi.toLocaleString("en-GB") : ""} onChange={(e) => patch({ shortfallCedi: num(e.target.value) })} placeholder="0" />
+            </label>
+            <label className={label}>
+              How you plan to cover it
+              <input className={field} value={draft.solvencyPlan ?? ""} onChange={(e) => patch({ solvencyPlan: e.target.value })} placeholder="Reserves, insurer claim, shareholder support…" />
+            </label>
+          </div>
+        </div>
+      )}
+      <label className={label}>
+        Solvency note
+        <input className={field} value={draft.solvency} onChange={(e) => patch({ solvency: e.target.value })} placeholder="How client balances are backed today" />
       </label>
       {draft.transactions.length > 0 && (
         <div className="flex flex-col gap-2">
@@ -340,6 +498,7 @@ function StepMoved({ draft, patch }: StepProps) {
             <div key={t.id} className="flex items-center gap-4 rounded-[18px] bg-[#F4F3F0] px-4 py-3 text-sm">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white">{t.rail === "payment" ? <Smartphone size={16} /> : <Wallet size={16} />}</span>
               <span className="flex-1">{t.from}</span>
+              <span className="hidden font-mono text-muted sm:inline">{t.ref.length > 20 ? shortId(t.ref) : t.ref}</span>
               <span className="font-mono text-muted">{shortId(t.to)}</span>
               <span className="w-32 text-right font-mono">{t.currency === "GHS" ? cedi(t.amount) : `${t.amount.toLocaleString("en-GB")} USDT`}</span>
             </div>
@@ -411,6 +570,17 @@ function StepWhere({ draft, patch }: StepProps) {
         {draft.identifiers.length === 0 && <div className="rounded-[22px] border-[1.5px] border-dashed border-[#B9B8B3] p-6 text-center text-sm text-muted">Nothing added yet.</div>}
       </div>
       <Toggle on={draft.fundsAbroad} onClick={() => patch({ fundsAbroad: !draft.fundsAbroad })} text="Some funds went to an exchange or account outside Ghana" />
+      <div className="grid gap-4 lg:grid-cols-2">
+        <label className={label}>
+          Technical indicators, one per line
+          <textarea className={area} value={draft.technical.join("\n")} onChange={(e) => patch({ technical: e.target.value.split("\n") })} placeholder="IP addresses, domains, malware, device fingerprints, internal accounts used" />
+          <span className="font-normal text-muted">These go to CERT-GH and, for Level 1, to FICSOC. They are not shown to checking businesses.</span>
+        </label>
+        <label className={label}>
+          SIM swap or number port details, if any
+          <textarea className={area} value={draft.simSwap ?? ""} onChange={(e) => patch({ simSwap: e.target.value })} placeholder="Which lines, when, at which outlet" />
+        </label>
+      </div>
     </>
   );
 }
@@ -461,23 +631,119 @@ function StepEvidence({ draft, patch, now }: StepProps & { now: number }) {
           </div>
         ))}
       </div>
+      <Snapshots draft={draft} patch={patch} now={now} />
       <label className={label}>
-        In your own words: how did it happen?
+        Forensic image hashes (SHA-256), one per line
         <textarea
-          className="min-h-[120px] w-full rounded-2xl border border-[#D6D5D1] p-5 text-base outline-none focus:border-ink"
-          value={draft.narrative.how}
-          onChange={(e) => patch({ narrative: { ...draft.narrative, how: e.target.value } })}
-          placeholder="What you know, and what you suspect."
+          className={clsx(area, "min-h-[80px] font-mono text-sm")}
+          value={(draft.forensicHashes ?? []).join("\n")}
+          onChange={(e) => patch({ forensicHashes: e.target.value.split("\n") })}
+          placeholder="Keep forensic images with your forensic firm and record their hash here"
         />
       </label>
+      <div className="flex flex-col gap-1">
+        <span className="text-lg font-semibold tracking-tight">What happened, and what you have done</span>
+        <span className="text-sm text-muted">This becomes the account of events in the police complaint report and the case file. Say what you know, what you suspect, and what you do not know yet.</span>
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        {(
+          [
+            ["how", "How you believe the attack happened (required)", "What you know, and what you suspect."],
+            ["timeline", "Timeline of key events, with times", "22:40 First SIM change"],
+            ["response", "Your investigation and response so far", "Who was convened, what was locked or exported"],
+            ["unknowns", "Findings so far, and what is still unknown", "What you have not yet established"],
+          ] as const
+        ).map(([k, l, ph]) => (
+          <label key={k} className={label}>
+            {l}
+            <textarea className={area} value={draft.narrative[k]} onChange={(e) => patch({ narrative: { ...draft.narrative, [k]: e.target.value } })} placeholder={ph} />
+          </label>
+        ))}
+      </div>
     </>
   );
 }
 
-function StepReview({ draft, routes, instName }: { draft: ReportDraft; routes: ReturnType<typeof routeCase>; instName: string }) {
+const TOOLS = ["Blockchain analytics", "Security monitoring or log tool", "Wallet or custody dashboard", "Exchange admin console", "Other"];
+
+function Snapshots({ draft, patch, now }: StepProps & { now: number }) {
+  const [tool, setTool] = useState(TOOLS[0]);
+  const [by, setBy] = useState("");
+  const [shows, setShows] = useState("");
+  const snaps = draft.exhibits.filter((e) => e.kind === "snapshot");
+  async function onFile(files: FileList | null) {
+    const f = files?.[0];
+    if (!f) return;
+    const h = await hashFile(f);
+    const no = `T-${String(snaps.length + 1).padStart(2, "0")}`;
+    const name = shows.trim() ? `${shows.trim()} (${f.name})` : f.name;
+    patch({ exhibits: [...draft.exhibits, { no, name, size: f.size, sha256: h, receivedAt: now, kind: "snapshot", tool: by.trim() ? `${tool}, operated by ${by.trim()}` : tool }] });
+    setShows("");
+  }
+  return (
+    <div className="flex flex-col gap-3 rounded-[22px] border border-[#E4E3DF] p-5">
+      <div className="flex flex-col gap-1">
+        <span className="text-base font-semibold">Snapshots from tools you used</span>
+        <span className="text-sm text-muted">Screenshots or exports from blockchain analytics, log and monitoring tools, or custody dashboards. Export the original file where the tool allows it, and say what it shows.</span>
+      </div>
+      <div className="grid gap-3 lg:grid-cols-3">
+        <label className={label}>
+          Tool
+          <select className={field} value={tool} onChange={(e) => setTool(e.target.value)}>
+            {TOOLS.map((t) => (
+              <option key={t}>{t}</option>
+            ))}
+          </select>
+        </label>
+        <label className={label}>
+          Operated by
+          <input className={field} value={by} onChange={(e) => setBy(e.target.value)} placeholder="Your team or your forensic firm" />
+        </label>
+        <label className={label}>
+          What the snapshot shows
+          <input className={field} value={shows} onChange={(e) => setShows(e.target.value)} placeholder="Flow from the receiving wallet" />
+        </label>
+      </div>
+      <label className="inline-flex h-11 cursor-pointer items-center gap-2 self-start rounded-full border border-ink px-5 text-sm font-medium hover:bg-paper">
+        <Upload size={15} /> Attach snapshot file
+        <input type="file" className="hidden" onChange={(e) => onFile(e.target.files)} />
+      </label>
+      {snaps.map((e) => (
+        <div key={e.no} className="flex items-center gap-3 rounded-[16px] bg-[#F4F3F0] px-3 py-2.5 text-sm">
+          <span className="font-mono text-muted">{e.no}</span>
+          <span className="min-w-0 flex-1 truncate">{e.name}</span>
+          <span className="hidden truncate text-xs text-muted sm:inline">{e.tool}</span>
+          <span className="font-mono text-xs text-muted">{e.sha256.slice(0, 10)}…</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+type ReviewProps = {
+  draft: ReportDraft;
+  patch: (p: Partial<ReportDraft>) => void;
+  routes: ReturnType<typeof routeCase>;
+  instName: string;
+  filerName: string;
+  filerId: string;
+  declared: boolean;
+  setDeclared: (v: boolean) => void;
+};
+
+function StepReview({ draft, patch, routes, instName, filerName, filerId, declared, setDeclared }: ReviewProps) {
   return (
     <>
       <H title={<>Ready to send.</>} sub="Check who receives what. Each authority only sees the parts its law allows. Nothing is sent until you press send." />
+      <div className="flex flex-col gap-2">
+        <span className="text-sm font-medium">Routing flags. Each one adds the authority that the law requires.</span>
+        <div className="flex flex-wrap gap-2">
+          <Toggle on={draft.personalData} onClick={() => patch({ personalData: !draft.personalData })} text="Customers' personal data was or may have been exposed" />
+          <Toggle on={draft.triggers.stateBacked} onClick={() => patch({ triggers: { ...draft.triggers, stateBacked: !draft.triggers.stateBacked } })} text="Signs of a state-backed attacker or critical infrastructure impact" />
+          <Toggle on={draft.triggers.telecom} onClick={() => patch({ triggers: { ...draft.triggers, telecom: !draft.triggers.telecom } })} text="SIM swap, number porting or another telecom element" />
+          <Toggle on={draft.triggers.corruption} onClick={() => patch({ triggers: { ...draft.triggers, corruption: !draft.triggers.corruption } })} text="Corruption, or a public officer, may be involved" />
+        </div>
+      </div>
       <div className="grid gap-3 xl:grid-cols-[1fr_1.15fr]">
         <div className="flex flex-col gap-1 self-start rounded-[24px] bg-[#F4F3F0] p-5 text-[15px]">
           {[
@@ -485,8 +751,10 @@ function StepReview({ draft, routes, instName }: { draft: ReportDraft; routes: R
             ["Reported by", instName],
             ["Type and level", `${TYPES.find((t) => t.k === draft.type)?.t} · Level ${draft.severity}`],
             ["Loss", draft.lossCedi ? cedi(draft.lossCedi) : "Not given"],
+            ["Clients covered", draft.solvencyStatus === "covered" ? "Yes, in full" : draft.solvencyStatus === "shortfall" ? `Shortfall${draft.shortfallCedi ? " of " + cedi(draft.shortfallCedi) : ""}` : "Not yet known"],
             ["Destinations", `${draft.identifiers.length} for the check register`],
             ["Evidence", `${draft.exhibits.length} sealed file${draft.exhibits.length === 1 ? "" : "s"}`],
+            ["Forensic image hashes", String((draft.forensicHashes ?? []).filter((x) => x.trim()).length)],
             ["Cross-rail", draft.crossRail ? "Yes" : "No"],
           ].map(([k, v]) => (
             <div key={k} className="flex justify-between gap-4 border-b border-[#E4E3DF] py-2.5 last:border-0">
@@ -514,12 +782,36 @@ function StepReview({ draft, routes, instName }: { draft: ReportDraft; routes: R
           ))}
         </div>
       </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className={label}>
+          Existing police reference, if already reported
+          <input className={clsx(field, "font-mono")} value={draft.priorPoliceRef ?? ""} onChange={(e) => patch({ priorPoliceRef: e.target.value })} placeholder="Optional" />
+        </label>
+        <label className={label}>
+          Your role
+          <input className={field} value={draft.filerRole ?? ""} onChange={(e) => patch({ filerRole: e.target.value })} placeholder="Head of compliance, CISO…" />
+        </label>
+      </div>
+      <span className="text-sm text-muted">
+        Filing as {filerName} ({filerId}). Your user ID and the time to the second are recorded on this report. You will be asked to review and sign the police complaint report before the CID.
+      </span>
+      <button onClick={() => setDeclared(!declared)} className={clsx("flex items-start gap-3 rounded-[22px] p-5 text-left text-[15px] leading-relaxed", declared ? "bg-ink text-white" : "bg-[#F4F3F0] hover:bg-[#ECEBE7]")}>
+        <span className={clsx("mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full", declared ? "bg-gold text-ink" : "border border-[#B9B8B3] bg-white")}>{declared && <Check size={14} strokeWidth={3} />}</span>
+        I declare that this report is accurate to the best of my knowledge, and that each system record attached was produced in the ordinary course of our operations.
+      </button>
     </>
   );
 }
 
-function Sent({ id, routes, severity, onBoard }: { id: string; routes: ReturnType<typeof routeCase>; severity: number; onBoard: () => void }) {
+function Sent({ id, routes, severity, detectedAt, onBoard }: { id: string; routes: ReturnType<typeof routeCase>; severity: number; detectedAt: number; onBoard: () => void }) {
   const now = usePortal((s) => s.now);
+  const H1 = 3600_000;
+  const deadlines: [string, string, string][] = [
+    ["Initial notice", `Filed ${dayTime(now)}`, now - detectedAt <= 24 * H1 ? "On time: within 24 hours of detection" : "Late: more than 24 hours after detection"],
+    ["Police complaint report", `Sign by ${dayTime(now + 24 * H1)}`, "The CID drafts it from this report. You review and sign it."],
+    ["Next update", `Due ${dayTime(now + 24 * H1)}`, "Add new facts to this case number, not a new report."],
+    ["Final incident report", `Due ${dayTime(now + 30 * 24 * H1)}`, "Day 30. The supervising regulator must accept it before the case closes."],
+  ];
   return (
     <div className="flex min-h-screen flex-col gap-4 bg-paper p-3 sm:p-6">
       <section className="kente kente-lg flex flex-col gap-8 rounded-[24px] px-8 pb-12 pt-8 text-white sm:px-14">
@@ -540,6 +832,17 @@ function Sent({ id, routes, severity, onBoard }: { id: string; routes: ReturnTyp
               <span className="truncate text-sm font-medium">{AUTHORITIES[r.authority].name}</span>
               <span className="text-xs text-muted">{r.role === "action" ? "For action" : "Copy"} · received {hhmm(now)}</span>
             </div>
+          </div>
+        ))}
+      </section>
+      <section className="flex flex-col gap-1 rounded-[22px] bg-white p-6">
+        <span className="pb-2 text-lg font-semibold tracking-tight">Your deadlines and what happens next</span>
+        <span className="pb-3 text-sm text-muted">Use case number <span className="font-mono text-ink">{id}</span> for every update. Your regulator and the other authorities hold the same case.</span>
+        {deadlines.map(([k, when, note]) => (
+          <div key={k} className="grid gap-1 border-t border-[#ECEBE7] py-3 text-sm sm:grid-cols-[220px_240px_1fr]">
+            <span className="font-medium">{k}</span>
+            <span className="font-mono text-[13px]">{when}</span>
+            <span className="text-muted">{note}</span>
           </div>
         ))}
       </section>

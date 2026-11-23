@@ -78,6 +78,7 @@ export default function MyTask() {
   const due = task.createdAt + task.ackTarget * M;
   const late = overdueMinutes(task, s.now);
   const handedOn = task.createdAt > c.filedAt;
+  const declared = (s.caseLog ?? []).some((x) => x.caseId === c.id && x.text === `Conflict of interest: none declared by ${s.personaId}`);
   const inst = institutionById(c.providerId);
 
   function act(button: Task["events"][number]["button"], opts?: { code?: string; note?: string; to?: AuthorityCode }) {
@@ -147,10 +148,19 @@ export default function MyTask() {
                 : "Record each step you take. Everyone on the case sees your status change, not your notes."}
             </span>
 
+            {mode === null && task.state === "pending" && (
+              <button
+                onClick={() => !declared && s.logCase(task.caseId, `Conflict of interest: none declared by ${s.personaId}`)}
+                className={clsx("flex items-start gap-2.5 rounded-lg border p-3 text-left text-[13px] leading-snug", declared ? "border-zinc-900 bg-zinc-50" : "border-zinc-200 hover:bg-zinc-50")}
+              >
+                <span className={clsx("mt-px flex h-4 w-4 shrink-0 items-center justify-center rounded border", declared ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-300")}>{declared && <Check size={11} strokeWidth={3} />}</span>
+                I declare no personal or financial connection with the provider, its staff or any named party. If you have one, decline so your supervisor can reassign the task.
+              </button>
+            )}
             {mode === null && (
               <div className="grid grid-cols-2 gap-2">
                 <button
-                  disabled={task.state !== "pending"}
+                  disabled={task.state !== "pending" || !declared}
                   onClick={() => act("acknowledge")}
                   className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-zinc-900 text-sm font-medium text-white disabled:opacity-40"
                 >

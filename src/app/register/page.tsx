@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import clsx from "clsx";
-import { Check, Clock, ShieldCheck, Smartphone, Wallet, X } from "lucide-react";
+import { Check, Clock, Plus, RefreshCw, ShieldCheck, Smartphone, Trash2, Wallet, X } from "lucide-react";
 import { usePortal } from "@/lib/store";
 import { personaById } from "@/lib/seed";
 import { duration, formatIdentifier, hhmm } from "@/lib/format";
@@ -18,6 +18,11 @@ export default function Register() {
   const s = usePortal();
   const [tab, setTab] = useState<"review" | "live" | "off">("review");
   const [dropping, setDropping] = useState<string | null>(null);
+  const [removing, setRemoving] = useState<string | null>(null);
+  const [newId, setNewId] = useState("");
+  const [newCase, setNewCase] = useState("");
+  const [newEv, setNewEv] = useState("");
+  const [addErr, setAddErr] = useState("");
   if (!hydrated) return <Loading />;
 
   const persona = personaById(s.personaId);
@@ -62,6 +67,9 @@ export default function Register() {
           ))}
         </div>
 
+        <span className="px-1 text-sm text-zinc-500">
+          The single record of every reported identifier. Identifiers only, never names. A place to check, not an order: it issues no holds.
+        </span>
         {list.length === 0 && <span className="px-1 py-6 text-sm text-zinc-500">Nothing here.</span>}
         {list.map((e) => {
           const left = (e.expiresAt - s.now) / M;
@@ -111,9 +119,73 @@ export default function Register() {
                     </button>
                   </div>
                 ))}
+              {tab === "live" &&
+                (removing === e.id ? (
+                  <div className="flex flex-col gap-1.5 md:w-[300px]">
+                    {["Challenge upheld: the owner showed it was not used", "Funds returned and case closed", "Entered in error"].map((r) => (
+                      <button
+                        key={r}
+                        onClick={() => {
+                          s.removeEntry(e.id, r);
+                          setRemoving(null);
+                        }}
+                        className="rounded-lg border border-zinc-200 px-3 py-1.5 text-left text-xs hover:bg-zinc-50"
+                      >
+                        {r}
+                      </button>
+                    ))}
+                    <span className="text-xs text-zinc-500">Removing sends a cancellation alert to businesses that received it.</span>
+                    <button onClick={() => setRemoving(null)} className="text-left text-xs text-zinc-500">
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <button onClick={() => s.renewEntry(e.id)} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-zinc-200 px-3.5 text-sm font-medium shadow-xs">
+                      <RefreshCw size={14} /> Renew 30 days
+                    </button>
+                    <button onClick={() => setRemoving(e.id)} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-zinc-200 px-3.5 text-sm font-medium shadow-xs">
+                      <Trash2 size={14} /> Remove
+                    </button>
+                  </div>
+                ))}
             </div>
           );
         })}
+      </div>
+
+      <div className="flex flex-col gap-3 rounded-[26px] border border-zinc-200 bg-white p-4 font-ui text-zinc-950 shadow-xs sm:p-5">
+        <div className="flex flex-col gap-1">
+          <span className="text-base font-semibold">Add a confirmed entry</span>
+          <span className="text-sm text-zinc-500">For agency officers, from tracing or analysis. It goes live at once for 30 days.</span>
+        </div>
+        <div className="grid gap-2 md:grid-cols-[1.3fr_1fr_1.3fr_auto]">
+          <input value={newId} onChange={(e) => setNewId(e.target.value)} placeholder="Number, account or wallet" className="h-10 rounded-lg border border-zinc-200 px-3 font-mono text-sm outline-none focus:border-zinc-400" />
+          <select value={newCase || s.cases[0]?.id} onChange={(e) => setNewCase(e.target.value)} className="h-10 rounded-lg border border-zinc-200 bg-white px-2.5 text-sm">
+            {s.cases.filter((c) => c.status !== "closed").map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.id}
+              </option>
+            ))}
+          </select>
+          <input value={newEv} onChange={(e) => setNewEv(e.target.value)} placeholder="Evidence linking it to the case, e.g. exhibit E-02" className="h-10 rounded-lg border border-zinc-200 px-3 text-sm outline-none focus:border-zinc-400" />
+          <button
+            disabled={!newId.trim() || !newEv.trim()}
+            onClick={() => {
+              const err = s.addEntry(newCase || s.cases[0]?.id, newId, newEv.trim());
+              setAddErr(err ?? "");
+              if (!err) {
+                setNewId("");
+                setNewEv("");
+                setTab("live");
+              }
+            }}
+            className="inline-flex h-10 items-center justify-center gap-1.5 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white disabled:opacity-40"
+          >
+            <Plus size={15} /> Add
+          </button>
+        </div>
+        {addErr && <span className="text-sm text-red-700">{addErr}</span>}
       </div>
     </div>
   );

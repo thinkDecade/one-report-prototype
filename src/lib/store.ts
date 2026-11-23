@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { AuditRecord, AuthorityCode, CaseRecord, CheckRecord, Exhibit, FraudAlert, RegisterEntry, Task, TaskEvent } from "./types";
+import type { AuditRecord, AuthorityCode, CaseRecord, CheckRecord, Exhibit, FraudAlert, InboundRequest, RegisterEntry, Task, TaskEvent } from "./types";
 import { seedState, institutionById, personaById } from "./seed";
 import { createCase, newTask, type ReportDraft } from "./cases";
 import { lookupKey, normaliseIdentifier, sha256 } from "./hash";
@@ -24,6 +24,8 @@ export interface PortalState {
   readAlerts: string[];
   journey: { id: string; step: number } | null;
   signedReports: string[];
+  inbound: InboundRequest[];
+  caseLog: { at: number; caseId: string; userId: string; text: string }[];
 
   setJourney: (j: { id: string; step: number } | null) => void;
   setClock: (t: number) => void;
@@ -39,6 +41,11 @@ export interface PortalState {
   runCheck: (raw: string) => CheckRecord | { error: string };
   issueAlert: (caseId: string) => string | null;
   markAlertRead: (id: string) => void;
+  renewEntry: (entryId: string) => void;
+  addEntry: (caseId: string, raw: string, evidence: string) => string | null;
+  removeEntry: (entryId: string, note: string) => void;
+  addInbound: (r: Omit<InboundRequest, "id" | "at" | "enteredBy" | "attachedTo">) => InboundRequest;
+  logCase: (caseId: string, text: string) => void;
 }
 
 function addAudit(audit: AuditRecord[], at: number, userId: string, action: string, object: string): AuditRecord[] {
@@ -61,6 +68,8 @@ export const usePortal = create<PortalState>()(
       readAlerts: [],
       journey: null,
       signedReports: [],
+      inbound: [],
+      caseLog: [],
 
       setJourney: (j) => set({ journey: j }),
       setClock: (t) => set({ now: t }),
@@ -82,6 +91,8 @@ export const usePortal = create<PortalState>()(
           personaId: mode === "fresh" ? "EMI-0004-01" : "CSA-0142",
           readAlerts: [],
           signedReports: [],
+          inbound: [],
+          caseLog: [],
         }),
 
       submitReport: (draft) => {
@@ -199,6 +210,70 @@ export const usePortal = create<PortalState>()(
         set({ alerts: [alert, ...s.alerts], audit: addAudit(s.audit, s.now, s.personaId, "Fraud alert issued", id) });
         return id;
       },
+
+      renewEntry: (entryId) =>
+        set((s) => ({
+          entries: s.entries.map((e) =>
+            e.id === entryId ? { ...e, expiresAt: s.now + 30 * D, history: [...e.history, { at: s.now, userId: s.personaId, action: "Renewed for 30 days" }] } : e
+          ),
+          audit: addAudit(s.audit, s.now, s.personaId, "Register entry renewed", entryId),
+        })),
+
+      addEntry: (caseId, raw, evidence) => {
+        const s = get();
+        const n = normaliseIdentifier(raw);
+        if (!n) return "Enter a Ghana mobile number, bank account or wallet address.";
+        const key = lookupKey(n.value);
+        if (s.entries.some((e) => e.lookupKey === key && e.caseId === caseId && e.status !== "dropped" && e.status !== "removed")) return "Already on the register for this case.";
+        const id = `RE-${3000 + s.entries.length}`;
+        const e: RegisterEntry = {
+          id,
+          identifier: n,
+          lookupKey: key,
+          caseId,
+          source: "investigator tracing",
+          status: "confirmed",
+          enteredBy: s.personaId,
+          enteredAt: s.now,
+          confirmedBy: s.personaId,
+          confirmedAt: s.now,
+          expiresAt: s.now + 30 * D,
+          history: [{ at: s.now, userId: s.personaId, action: "Entered as confirmed", note: evidence }],
+        };
+        set({ entries: [e, ...s.entries], audit: addAudit(s.audit, s.now, s.personaId, "Confirmed entry added", id) });
+        return null;
+      },
+
+      removeEntry: (entryId, note) =>
+        set((s) => ({
+          entries: s.entries.map((e) =>
+            e.id === entryId ? { ...e, status: "removed" as const, history: [...e.history, { at: s.now, userId: s.personaId, action: "Removed", note }] } : e
+          ),
+          alerts: s.alerts.map((a) => (a.entryIds.includes(entryId) && !a.cancelledEntryIds.includes(entryId) ? { ...a, cancelledEntryIds: [...a.cancelledEntryIds, entryId] } : a)),
+          audit: addAudit(s.audit, s.now, s.personaId, "Register entry removed; cancellation alert sent", entryId),
+        })),
+
+      addInbound: (r) => {
+        const s = get();
+        const keys = r.identifiers.map((x) => normaliseIdentifier(x)).filter(Boolean).map((n) => lookupKey(n!.value));
+        const hit = s.entries.find((e) => keys.includes(e.lookupKey));
+        const list = s.inbound ?? [];
+        const req: InboundRequest = {
+          ...r,
+          id: "IN-2026-" + String(41 + list.length).padStart(4, "0"),
+          at: s.now,
+          enteredBy: s.personaId,
+          attachedTo: hit?.caseId,
+        };
+        set({ inbound: [req, ...list], audit: addAudit(s.audit, s.now, s.personaId, hit ? "Inbound request attached to case" : "Inbound request opened as new case", req.id) });
+        return req;
+      },
+
+      logCase: (caseId, text) =>
+        set((s) => ({
+          caseLog: [...(s.caseLog ?? []), { at: s.now, caseId, userId: s.personaId, text }],
+          audit: addAudit(s.audit, s.now, s.personaId, text, caseId),
+        })),
 
       markAlertRead: (id) => set((s) => (s.readAlerts.includes(id) ? s : { readAlerts: [...s.readAlerts, id] })),
     }),

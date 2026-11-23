@@ -52,7 +52,7 @@ export const JOURNEYS: Journey[] = [
         label: "File one report",
         href: "/report?drill=1",
         reset: "fresh",
-        hint: "The form is filled in with the drill. Click through the five steps and submit. Evidence is fingerprinted in your browser.",
+        hint: "The form is filled in with the drill. Click through the six steps, tick the declaration and submit. Evidence is fingerprinted in your browser.",
       },
       {
         label: "Follow your case",
@@ -73,7 +73,7 @@ export const JOURNEYS: Journey[] = [
     ],
     map: [
       { t: "03:58", h: "Float drained by SIM swap", r: "Reconciliation alert", k: "trig" },
-      { t: "04:31", h: "Files one report", r: "Five steps · evidence sealed on upload" },
+      { t: "04:31", h: "Files one report", r: "Six steps · evidence sealed on upload" },
       { t: "07:05", h: "Follows “My case”", r: "Who acknowledged, what happens next", k: "new" },
       { t: "07:10", h: "Signs the police report", r: "CID drafted it from her report", k: "new" },
       { t: "08:31", h: "Freeze outcome", r: "Told what was held, and by whom", k: "end" },

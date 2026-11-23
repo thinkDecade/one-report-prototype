@@ -193,6 +193,13 @@ export function drillDraft(): ReportDraft {
     personalData: d.personalData,
     fundsAbroad: d.fundsAbroad,
     triggers: { ...d.triggers },
+    customerLossCedi: 0,
+    companyLossCedi: d.lossCedi,
+    containmentChecks: ["Withdrawals or transfers paused", "Systems or accounts isolated"],
+    solvencyStatus: "covered",
+    simSwap: "9 agent lines changed between 22:40 and 03:30 at 2 retail outlets; operator notified 04:20",
+    forensicHashes: ["9b0e4c1f7a2d6e3b8c5f0a9d4e7b1c6f3a8d2e5b9c0f4a7d1e6b3c8f5a2d9e0b"],
+    filerRole: "Head of Fraud & Incident Response",
   };
 }
 

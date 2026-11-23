@@ -28,6 +28,7 @@ import type { AuthorityCode, CaseRecord, Task } from "@/lib/types";
 import { cedi, duration, hhmm, initials, shortId } from "@/lib/format";
 import AppNav from "@/components/AppNav";
 import { Loading, useHydrated } from "@/components/ui";
+import CaseTabBody, { CASE_TABS, type CaseTab } from "@/components/CaseTabs";
 
 const M = 60_000;
 
@@ -58,6 +59,7 @@ function Board() {
   const [taskId, setTaskId] = useState<string | null>(null);
   const [filter, setFilter] = useState("");
   const [mineOnly, setMineOnly] = useState(false);
+  const [tab, setTab] = useState<CaseTab>("board");
 
   const persona = personaById(s.personaId);
   const openCases = s.cases.filter((c) => c.status !== "closed");
@@ -134,6 +136,9 @@ function Board() {
                   <Smartphone size={13} /> Mobile money → crypto
                 </span>
               )}
+              <span className="glass inline-flex h-8 items-center gap-2 rounded-full px-3.5 text-xs">
+                {c.leadAgency ? `Lead investigator: ${AUTHORITIES[c.leadAgency].short}, confirmed` : "Lead investigator: not yet confirmed (target 2 hours)"}
+              </span>
               <span className="ml-1">
                 Filed {hhmm(c.filedAt)} by {inst?.name.replace(" Ltd", "")} · {cedi(c.lossCedi)} lost
               </span>
@@ -157,11 +162,24 @@ function Board() {
       {/* BOARD (shadcn style) */}
       <div className="grid flex-1 items-start gap-4 font-ui text-zinc-950 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="flex flex-col gap-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-xs">
+          <div className="flex max-w-full gap-0.5 overflow-x-auto rounded-lg bg-zinc-100 p-1">
+            {CASE_TABS.map((t) => (
+              <button
+                key={t.k}
+                onClick={() => setTab(t.k)}
+                className={clsx("inline-flex h-[30px] shrink-0 items-center rounded-md px-3 text-sm font-medium", tab === t.k ? "bg-white shadow-xs" : "text-zinc-500 hover:text-zinc-900")}
+              >
+                {t.label}
+                {t.k === "evidence" && <span className="ml-1.5 font-mono text-xs text-zinc-400">{c.exhibits.length}</span>}
+              </button>
+            ))}
+          </div>
+          {tab !== "board" ? (
+            <CaseTabBody tab={tab} c={c} />
+          ) : (
+          <>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex gap-0.5 rounded-lg bg-zinc-100 p-1">
-              <span className="inline-flex h-[30px] items-center rounded-md bg-white px-3.5 text-sm font-medium shadow-xs">Board</span>
-              <span className="inline-flex h-[30px] items-center rounded-md px-3.5 text-sm font-medium text-zinc-500">Evidence · {c.exhibits.length}</span>
-            </div>
+            <span className="text-sm text-zinc-500">Every authority receives the case at once. &quot;Hand on&quot; is only for steps that legally need another body.</span>
             <div className="flex flex-wrap items-center gap-2">
               <label className="flex h-9 w-60 items-center gap-2 rounded-lg border border-zinc-200 px-3 text-sm">
                 <Search size={15} className="text-zinc-500" />
@@ -197,6 +215,8 @@ function Board() {
               );
             })}
           </div>
+          </>
+          )}
         </div>
 
         <aside className="flex flex-col gap-4">
@@ -272,6 +292,11 @@ function TaskPanel({ task, c }: { task: Task; c: CaseRecord }) {
   const allTasks = usePortal((s) => s.tasks);
   const onCase = allTasks.filter((t) => t.caseId === c.id).map((t) => t.authority);
   const handTargets = (Object.keys(AUTHORITIES) as AuthorityCode[]).filter((a) => !onCase.includes(a));
+  const caseLog = usePortal((s) => s.caseLog);
+  const logCase = usePortal((s) => s.logCase);
+  const declaredKey = `Conflict of interest: none declared by ${personaId}`;
+  const declared = (caseLog ?? []).some((x) => x.caseId === c.id && x.text === declaredKey);
+  const [conflict, setConflict] = useState(false);
 
   const submit = () => {
     if (mode === "record") taskAction(task.id, "record", { code, note });
@@ -305,6 +330,29 @@ function TaskPanel({ task, c }: { task: Task; c: CaseRecord }) {
             </button>
           )}
         </div>
+      ) : task.state === "pending" && !declared ? (
+        conflict ? (
+          <div className="flex flex-col gap-2 rounded-lg bg-zinc-50 p-3 text-sm">
+            <span>Recorded. Your supervisor reassigns this task to another officer. You no longer see the case.</span>
+            <button onClick={() => setConflict(false)} className="h-9 rounded-lg border border-zinc-200 text-sm font-medium hover:bg-white">
+              Undo
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2.5 rounded-lg border border-zinc-200 p-3 text-sm">
+            <span>
+              <b>Conflict of interest declaration.</b> Before opening this case, confirm you have no personal or financial connection with the provider, its staff or any named party.
+            </span>
+            <div className="grid grid-cols-2 gap-2">
+              <button onClick={() => logCase(c.id, declaredKey)} className="h-9 rounded-lg bg-zinc-900 text-sm font-medium text-zinc-50">
+                I declare no conflict
+              </button>
+              <button onClick={() => { setConflict(true); logCase(c.id, `Conflict of interest declared by ${personaId}: reassign`); }} className="h-9 rounded-lg border border-zinc-200 text-sm font-medium hover:bg-zinc-50">
+                I have a conflict
+              </button>
+            </div>
+          </div>
+        )
       ) : mode ? (
         <div className="flex flex-col gap-2.5">
           {mode === "record" && (

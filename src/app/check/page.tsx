@@ -54,6 +54,8 @@ export default function CheckPage() {
   const [raw, setRaw] = useState("024 555 0187");
   const [result, setResult] = useState<CheckRecord | null>(null);
   const [err, setErr] = useState("");
+  const [value, setValue] = useState("");
+  const [checkedValue, setCheckedValue] = useState("");
   if (!hydrated) return <Loading />;
 
   const persona = personaById(personaId);
@@ -67,6 +69,7 @@ export default function CheckPage() {
     } else {
       setErr("");
       setResult(r);
+      setCheckedValue(value);
     }
   };
 
@@ -104,6 +107,16 @@ export default function CheckPage() {
             <Search size={18} />
           </button>
         </form>
+        <label className="flex h-11 items-center gap-2.5 rounded-full bg-white/10 px-4 text-sm">
+          <span className="shrink-0 text-white/75">Trade value (optional)</span>
+          <input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            inputMode="decimal"
+            placeholder="₵ or USDT"
+            className="min-w-0 flex-1 bg-transparent font-mono text-white outline-none placeholder:text-white/45"
+          />
+        </label>
         {err && <span className="px-2 text-[13px] text-[#FFB4AE]">{err}</span>}
       </section>
 
@@ -125,6 +138,7 @@ export default function CheckPage() {
               </span>
               <span className="font-mono">{hhmm(result.at)} GMT</span>
             </div>
+            {checkedValue && <span className="-mt-1.5 px-1 text-xs text-muted">Trade value recorded on the receipt: <span className="font-mono text-ink">{checkedValue}</span></span>}
             <div className="flex flex-col gap-2.5 pt-1">
               {a.steps.map(([Icon, text]) => {
                 const I = Icon as typeof X;
@@ -139,9 +153,19 @@ export default function CheckPage() {
               })}
             </div>
           </section>
+          {result.answer !== "none" && (
+            <section className="flex items-start gap-3 rounded-[22px] bg-gold-soft p-4 text-[13px] leading-relaxed">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink text-white">
+                <Lock size={15} />
+              </span>
+              <span>
+                <b>No tipping off.</b> Tipping off is an offence under section 48(1)(f) of the Anti-Money Laundering Act, 2020 (Act 1044). Do not tell any customer that a check, report or investigation exists. Describe a held deposit only as &quot;pending review&quot;.
+              </span>
+            </section>
+          )}
           <div className="flex gap-2">
             {result.answer !== "none" ? (
-              <Link href="/report" className="inline-flex h-[54px] flex-1 items-center justify-center gap-2 rounded-full bg-ink text-[15px] font-medium text-white">
+              <Link href="/report?type=C" className="inline-flex h-[54px] flex-1 items-center justify-center gap-2 rounded-full bg-ink text-[15px] font-medium text-white">
                 Report a match <ArrowRight size={17} />
               </Link>
             ) : null}
@@ -165,6 +189,19 @@ export default function CheckPage() {
           <span className="text-sm leading-relaxed text-muted">
             The register only says whether a number or wallet has been reported. It never names anyone, and nobody can download a list. Every check gives you a receipt that shows you acted in good faith.
           </span>
+          <div className="flex flex-col gap-2 border-t border-[#ECEBE7] pt-3 text-[13px] leading-relaxed text-[#4A4E57]">
+            <span>
+              <b className="text-ink">A place to check, not an order.</b> The register orders no hold or freeze. What you do is your decision under your customer terms and the law. Keep answers confidential.
+            </span>
+            <span>One identifier per check, up to {DAILY} checks a day, so nobody can rebuild the register.</span>
+            <span>Unconfirmed entries lapse after 24 hours unless an authority confirms them. Confirmed entries lapse after 30 days unless renewed.</span>
+            <span>Anyone who believes their number was reported wrongly can challenge it by calling 292 or through their provider.</span>
+            <span>Not registered yet? Businesses register with a Ghana Card, company documents if they trade through a company, and the numbers and wallets they trade through.</span>
+            <span>
+              Already received funds from a reported number?{" "}
+              <Link href="/report?type=C" className="font-medium text-ink underline underline-offset-2">Report it as stolen funds received</Link>, with the trade record and your receipts. A prompt report is proposed to count as evidence of good faith.
+            </span>
+          </div>
           <div className="flex flex-col gap-1.5 pt-1 text-[13px]">
             <span className="text-muted">Try these sample numbers:</span>
             {["024 555 0187", "TQ7nVfK3sGh9Xb2LmPz8RwYc4DjE6uAt5H", "020 123 4567"].map((x) => (
