@@ -211,8 +211,10 @@ function Banner({ row, task, now }: { row: Row; task: Task; now: number }) {
         ? `A supervisor was told at ${hhmm(supAt)}. Heads and the steering group are told at ${hhmm(headsAt)}, in ${duration((headsAt - now) / M)}.`
         : `Heads and the steering group were told at ${hhmm(headsAt)}.`;
   return (
-    <div className="flex flex-wrap items-center gap-4 rounded-[20px] border-l-4 border-[#B3261E] bg-[#FBEDEA] px-5 py-4">
-      <TriangleExclamationPoint size={20} className="shrink-0 text-[#B3261E]" />
+    <div className="flex flex-wrap items-center gap-4 rounded-[20px] bg-[#FBEDEA] px-5 py-4">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#B3261E] text-white">
+        <TriangleExclamationPoint size={17} />
+      </span>
       <span className="min-w-[240px] flex-1 text-[15px]">
         <b>
           {name} has not acknowledged after {duration(row.mins)}.
