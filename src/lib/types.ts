@@ -133,6 +133,17 @@ export interface CaseRecord {
   leadAgency?: AuthorityCode;
   linkedCases: string[];
   policeRef?: string;
+  // Added to match the v4.5 concept prototype. Optional so older saved data still loads.
+  customerLossCedi?: number;
+  companyLossCedi?: number;
+  containmentChecks?: string[];
+  solvencyStatus?: "covered" | "unknown" | "shortfall";
+  shortfallCedi?: number;
+  solvencyPlan?: string;
+  simSwap?: string;
+  forensicHashes?: string[];
+  priorPoliceRef?: string;
+  filerRole?: string;
 }
 
 export type EntryStatus = "provisional" | "held" | "confirmed" | "dropped" | "lapsed" | "removed";
@@ -183,6 +194,17 @@ export interface FraudAlert {
   issuedAt: number;
   cancelledEntryIds: string[];
   text: string;
+}
+
+export interface InboundRequest {
+  id: string;
+  at: number;
+  channel: string;
+  from: string;
+  identifiers: string[];
+  asked: string;
+  attachedTo?: string;
+  enteredBy: string;
 }
 
 export interface Notice {

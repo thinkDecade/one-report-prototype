@@ -14,6 +14,7 @@ const LINKS = [
   { href: "/report", label: "Report incident" },
   { href: "/check", label: "Check register" },
   { href: "/board", label: "Case board" },
+  { href: "/inbound", label: "Inbound" },
   { href: "/steering", label: "Oversight" },
 ];
 
@@ -40,7 +41,7 @@ export default function AppNav() {
               key={l.href}
               href={l.href}
               className={clsx(
-                "hidden h-10 items-center rounded-full px-4 text-sm transition-colors lg:inline-flex",
+                "hidden h-10 items-center whitespace-nowrap rounded-full px-3 text-[13px] transition-colors lg:inline-flex xl:px-4 xl:text-sm",
                 active ? "bg-white font-semibold text-ink" : "border border-white/30 hover:bg-white/10"
               )}
             >
@@ -55,7 +56,7 @@ export default function AppNav() {
           {unread > 0 && <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-gold" />}
         </Link>
         <span className="inline-flex h-10 items-center gap-2 rounded-full border border-white/30 pl-4 pr-1.5 text-sm">
-          <span className="hidden sm:inline">
+          <span className="hidden whitespace-nowrap sm:inline lg:hidden xl:inline">
             {p?.name ?? personaId} · {p?.authority ? p.institution.replace("_", " ") : p?.institution}
           </span>
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-xs font-bold text-navy">{initials(p?.name ?? "?")}</span>

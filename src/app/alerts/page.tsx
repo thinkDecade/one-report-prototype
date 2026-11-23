@@ -59,6 +59,20 @@ export default function AlertsPage() {
           </Link>
         );
       })}
+      <section className="flex flex-col gap-3 rounded-[24px] bg-white p-5">
+        <strong className="text-lg font-semibold tracking-tight">How an alert reaches you</strong>
+        <span className="text-[13px] text-muted">An email and an SMS tell you to open the app. The identifiers are only shown in the app. Sample wording:</span>
+        <div className="flex flex-col gap-1 rounded-2xl bg-paper p-4 font-mono text-xs leading-relaxed">
+          <span className="text-muted">From: alerts@onereport.example (sample)</span>
+          <span className="font-semibold">Subject: URGENT FRAUD ALERT {alerts[0]?.id ?? "GH-FA-0031"}: check before you transact</span>
+          <span>Confirmed numbers and wallets have been added to the check register. Open the app to see the alert.</span>
+          <span>This alert never asks for a password, code or payment.</span>
+        </div>
+        <div className="rounded-2xl bg-paper p-4 font-mono text-xs leading-relaxed">
+          SMS from ONEREPORT: URGENT FRAUD ALERT {alerts[0]?.id ?? "GH-FA-0031"}. Check before you transact. Open the app.
+        </div>
+        <span className="text-[13px] text-muted">If an entry is removed from the register, you get a cancellation alert in the same way.</span>
+      </section>
     </MobileShell>
   );
 }
