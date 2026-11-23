@@ -3,10 +3,10 @@
 import Link from "next/link";
 import {
   ArrowRight,
+  ArrowRightLeft,
   Bell,
   ChartColumn,
   Check,
-  Clock,
   EyeOff,
   FileText,
   Fingerprint,
@@ -22,9 +22,9 @@ import { GhanaRule, Logo, useHydrated } from "@/components/ui";
 import { usePortal } from "@/lib/store";
 
 const WHAT = [
-  { icon: FileText, title: "One report", text: "A hacked business files once. Routing rules send each authority its part at the same moment." },
-  { icon: Search, title: "A check register", text: "Numbers and wallets linked to a theft go on a register that agents and OTC desks check before money moves." },
-  { icon: Clock, title: "A clock on every task", text: "Each authority has a time to acknowledge. Late tasks escalate to supervisors, then to heads." },
+  { icon: FileText, title: "One reporting channel", text: "A single structured report, rather than separate submissions through multiple disconnected channels." },
+  { icon: ArrowRightLeft, title: "Connected financial intelligence", text: "A clearer view of incidents and suspicious fund movements across payment and virtual asset rails." },
+  { icon: ShieldCheck, title: "Coordinated response", text: "Shared case visibility, preserved evidence and accountable actions across the relevant institutions." },
 ];
 
 const AUDIENCES = [
@@ -172,30 +172,47 @@ export default function Landing() {
 
       <div className="mx-auto flex w-full max-w-[1180px] flex-col">
         {/* WHAT IT IS */}
-        <section id="what" className="flex flex-col gap-6 pt-16">
-          <div className="flex flex-col gap-2">
-            <span className="text-sm font-medium text-muted">What it is</span>
-            <h2 className="max-w-[720px] font-display text-[clamp(28px,3vw,40px)] font-extrabold leading-tight tracking-[-0.035em]">
-              One front door for cyber incidents across both money rails.
-            </h2>
-            <p className="max-w-[680px] text-[15px] leading-relaxed text-[#4A4E57]">
-              Today a hacked business has to tell the Bank of Ghana, the SEC, the police and others separately, often while money is still moving. One Report replaces that with three
-              things working together.
-            </p>
+        <section id="what" className="flex flex-col gap-8 pt-16">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-12">
+            <div className="flex flex-col gap-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.14em] text-navy">A shared response framework</span>
+              <h2 className="max-w-[560px] font-display text-[clamp(28px,3vw,40px)] font-extrabold leading-tight tracking-[-0.035em]">
+                Financial crime moves across rails. Incident response should too.
+              </h2>
+            </div>
+            <div className="flex max-w-[600px] flex-col gap-4 text-[15px] leading-relaxed text-[#4A4E57] lg:pt-7">
+              <p>
+                Virtual asset and payment-related incidents rarely remain within one financial system. Stolen funds can move between mobile money, bank accounts and virtual
+                assets, leaving providers and investigators with fragmented information and disconnected reporting channels.
+              </p>
+              <p className="text-ink">
+                Project One Report is designed to bring these parts together through a unified incident reporting and evidence coordination platform.
+              </p>
+              <p>
+                It gives participating providers a common channel to submit incident reports and supporting evidence, while helping relevant authorities access the information
+                they need to coordinate an effective response.
+              </p>
+            </div>
           </div>
-          <div className="grid gap-3 md:grid-cols-3">
-            {WHAT.map((w) => {
-              const I = w.icon;
-              return (
-                <div key={w.title} className="flex flex-col gap-3 rounded-[20px] bg-white p-5">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-navy text-white">
-                    <I size={18} />
-                  </span>
-                  <span className="text-lg font-semibold tracking-tight">{w.title}</span>
-                  <span className="text-sm leading-relaxed text-[#4A4E57]">{w.text}</span>
-                </div>
-              );
-            })}
+          <div className="flex flex-col gap-3">
+            <span className="text-sm font-medium text-muted">Three principles that define the platform</span>
+            <div className="grid gap-3 md:grid-cols-3">
+              {WHAT.map((w, i) => {
+                const I = w.icon;
+                return (
+                  <div key={w.title} className="flex flex-col gap-3 rounded-[20px] bg-white p-5">
+                    <div className="flex items-center justify-between">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-navy text-white">
+                        <I size={18} />
+                      </span>
+                      <span className="font-mono text-xs text-muted">0{i + 1}</span>
+                    </div>
+                    <span className="text-lg font-semibold tracking-tight">{w.title}</span>
+                    <span className="text-sm leading-relaxed text-[#4A4E57]">{w.text}</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </section>
 
